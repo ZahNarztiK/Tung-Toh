@@ -1,17 +1,11 @@
 <?
+
 session_start();
 
 $in_site = true;
-$response = [
-	"verified" => false,
-	"message" => ""
-];
 
-info_check();
-require_once("../inc/db_connect.php");
-$info = add_member();
-set_session($info);
-success("Samuk dai la!");
+$func = "add_member";
+require_once("../../inc/init_login_func.php");
 
 
 
@@ -19,7 +13,7 @@ success("Samuk dai la!");
 
 function add_member(){
 	try{
-		global $db_pdo, $response;
+		global $db_pdo;
 		$email = $_POST['email'];
 		$password = md5($_POST['password']);
 
@@ -46,6 +40,10 @@ function add_member(){
 				]
 				+ $rs;
 
+		set_session($rs);
+		set_login_response();
+		success("Samuk dai la!");
+
 		return $rs;
 	}
 	catch(PDOException $e){
@@ -64,36 +62,6 @@ function info_check(){
 
 	if(!valid_password($_POST['email']))
 		reject("Mai me pass, ai har");
-}
-
-function reject($message){
-	global $response;
-
-	$response['message'] = "Error: $message";
-	die(json_encode($response));
-}
-
-function set_session($info){
-	$_SESSION = $info + $_SESSION;
-}
-
-function success($message){
-	global $response;
-	$response =	[
-					"verified" => true,
-					"message" => $message,
-					"session_id" => $_SESSION['session_id']
-				] + $response;
-	echo json_encode($response);
-}
-
-function valid_email($email){
-	$pattern = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/";
-	return preg_match($pattern, $email);
-}
-
-function valid_password($password){
-	return $password != "";
 }
 
 ?>

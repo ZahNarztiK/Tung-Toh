@@ -1,30 +1,32 @@
 <?
 
-if(isset($in_site)){
-	
-}
-else{
+if(!isset($_SESSION))
 	session_start();
-	$response = [];
-	if(!isset($_SESSION['member_id']))
-		reject("Login gon ai sus!!!");
 
-	$in_site = true;
+if(!isset($_SESSION['member_id']))
+	reject("Login gon ai sus!!!");
 
-	require_once("../inc/db_connect.php");
-	$response = getProfile();
-	success("Login dai la!");
+$execute = !isset($in_site);
+$in_site = true;
+require_once("../../inc/init_response_func.php");
+require_once("../../inc/db_connect.php");
+
+if($execute){
+	$member_id = $_SESSION['member_id'];
+	if(isset($_GET['member_id']) && !is_nan($_GET['member_id']))
+		$member_id = $_GET['member_id'];
+	$rs = getProfile($member_id);
+	set_response($rs);
+	success("Ow pai!");
 }
 
 
 
 
 
-
-function getProfile(){
+function getProfile($member_id){
 	try{
-		global $db_pdo, $response;
-		$member_id = $_SESSION['member_id'];
+		global $db_pdo;
 
 		$stmt = $db_pdo->prepare("SELECT firstname, lastname, level, points, profile_image, email FROM member WHERE member_id = :member_id");
 		$stmt->bindParam(':member_id', $member_id);
@@ -34,27 +36,12 @@ function getProfile(){
 			reject("No info.");
 		
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
-		
+
 		return $rs;
 	}
 	catch(PDOException $e){
 		reject($e->getMessage());
 	}
-}
-
-function reject($message){
-	$response['message'] = "Error: $message";
-	die(json_encode($response));
-}
-
-function success($message){
-	global $response;
-	/*$response =	[
-					"verified" => true,
-					"message" => $message,
-					"session_id" => $_SESSION['session_id']
-				] + $response;*/
-	echo json_encode($response);
 }
 
 ?>
