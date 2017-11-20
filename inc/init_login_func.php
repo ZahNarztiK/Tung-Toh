@@ -1,20 +1,21 @@
 <?
 
-if(!isset($in_site))
+if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
-if(!isset($func))
+}
+if(!isset($_FUNC)){
 	die("No function!!");
+}
 
 require_once("../../inc/init_response_func.php");
-$response = [
-	"verified" => false,
-	"message" => ""
-];
+set_response([
+	"verified" => false
+]);
 
 info_check();
 require_once("../../inc/db_connect.php");
-require_once("getProfile.php");
-$func();
+require_once("../../inc/profile_func.php");
+$_FUNC();
 
 
 
