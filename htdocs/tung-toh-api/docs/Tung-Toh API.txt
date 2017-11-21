@@ -1,0 +1,42 @@
+Default Response JSON
+{
+	"message_code" : "-1",
+	"message_description" : "",
+	"data" : {}
+}
+
+All data will be returned in "data" as JSON
+
+* Required
+##### Member #####
+
+register.php, login.php [POST]
+- "email" *
+- "password" *
+
+verifySession.php [POST]
+- "session_id" *
+
+
+Response (Succeeded)
+"data" : {
+	"verified" : true
+	"session_id"
+	"info" as JSON from getProfile.php
+}
+
+Response (Failed)
+"data" : {
+	"verified" => false
+}
+
+
+logout.php Response
+"data" : {
+	"logged_out" : bool (logged in before)
+}
+
+#####Data#####
+
+getProfile.php [GET]
+firstname, lastname, level, points, profile_image, email 

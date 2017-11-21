@@ -1,0 +1,24 @@
+Success: 00	AccessDenied: 99	
+PHP-FE: 01-09	PDO Error: 10	DB, SQL: 11-19
+
+No data: X4	Duplicated data: X5		Operation failed: X9
+
+Member	[M]
+	Regis	[MR]
+		Missing info	[04]
+		Duplicated email	[15]
+		DB insert failed	[19]
+
+	Session	[MS]
+		Missing info	[04]
+		Login failed	[14]
+
+	Login	[ML]
+		Missing info	[04]
+		Login failed	[14]
+
+Info	[I]
+	Profile	[IP]
+		Not found		[14]
+	T	[IT]
+		
