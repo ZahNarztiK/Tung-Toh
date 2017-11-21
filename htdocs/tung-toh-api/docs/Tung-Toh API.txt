@@ -5,38 +5,88 @@ Default Response JSON
 	"data" : {}
 }
 
-All data will be returned in "data" as JSON
+All data will be received & returned in JSON named "data", except register, login, & GET input.
 
 * Required
 ##### Member #####
 
 register.php, login.php [POST]
-- "email" *
-- "password" *
+* "email" (string)
+* "password" (string)
 
 verifySession.php [POST]
-- "session_id" *
+* "session_id" (string)
 
 
 Response (Succeeded)
 "data" : {
-	"verified" : true
-	"session_id"
-	"info" as JSON from getProfile.php
+	"verified" : true (bool)
+	"session_id" (string)
+	"info" (JSON from getProfile.php)
 }
 
 Response (Failed)
 "data" : {
-	"verified" => false
+	"verified" => false (bool)
 }
 
+----------
 
-logout.php Response
+logout.php
+
+Response
 "data" : {
-	"logged_out" : bool (logged in before)
+	"logged_out" (bool: logged in before)
 }
 
 #####Data#####
 
 getProfile.php [GET]
-firstname, lastname, level, points, profile_image, email 
+- member_id (int)
+
+
+Response
+"data" : {
+	"firstname" (string)
+	"lastname" (string)
+	"level" (int)
+	"points" (int)
+	"profile_image" (string: url)
+	"email" (string)
+}
+
+----------
+
+addMap.php [POST]
+{
+*	"place_id" (int)
+*	"width" (int)
+*	"height" (int)
+	"name" (string)
+	"bg_image" (string: url)
+}
+
+Response
+"data" : {
+	"map_id" (int)
+}
+
+----------
+
+addTable.php [POST]
+{
+*	"code" (string)
+*	"map_id" (int)
+	"x" (int)
+	"y" (int)
+	"table_type_id" (int)
+}
+
+Response
+"data" : {
+	"table_id" (int)
+}
+
+----------
+
+##########

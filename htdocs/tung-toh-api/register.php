@@ -18,13 +18,15 @@ function add_member(){
 		$email = $_POST['email'];
 		$password = md5($_POST['password']);
 
-		$stmt = $DB_PDO->prepare("SELECT member_id FROM member WHERE email = :email");
+
+		$stmt = $DB_PDO->prepare("SELECT TOP 1 member_id FROM member WHERE email = :email");
 		$stmt->bindParam(':email', $email);
 		$stmt->execute();
 
 		if($stmt->rowCount() > 0){
 			reject("MR15", "Mee samak ma laew wa' sorry ;p");
 		}
+
 
 		$stmt = $DB_PDO->prepare("INSERT INTO member (email, password, session_id) VALUES (:email, :password, :session_id)");
 		$stmt->bindParam(':email', $email);
@@ -38,6 +40,7 @@ function add_member(){
 			reject("MR19", "Registration failed.");
 		}
 		
+
 		$rs =	[
 					"member_id" => $member_id,
 					"email" => $email,

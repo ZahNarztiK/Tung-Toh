@@ -9,9 +9,9 @@ if(!isset($_SESSION['member_id'])){
 	reject("IT99", "Login gon ai sus!!!");
 }
 
-require_once("../../inc/table_func.php");
+require_once("../../inc/map_func.php");
 
-$rs = addTable($_POST);
+$rs = addMap($_POST);
 set_response($rs);
 success("IT", "Ow pai!");
 

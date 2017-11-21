@@ -12,13 +12,15 @@ function getProfile($member_id){
 	try{
 		global $DB_PDO;
 
-		$stmt = $DB_PDO->prepare("SELECT firstname, lastname, level, points, profile_image, email FROM member WHERE member_id = :member_id");
-		$stmt->bindParam(':member_id', $member_id);
+
+		$stmt = $DB_PDO->prepare("SELECT TOP 1 firstname, lastname, level, points, profile_image, email FROM member WHERE member_id = :member_id");
+		$stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
 			reject("IP14", "No info.");
 		}
+
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
 
 		return $rs;

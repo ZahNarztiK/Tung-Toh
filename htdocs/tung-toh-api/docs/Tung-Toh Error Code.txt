@@ -1,7 +1,14 @@
-Success: 00	AccessDenied: 99	
-PHP-FE: 01-09	PDO Error: 10	DB, SQL: 11-19
+Success: 00
+AccessDenied: 99
 
-No data: X4	Duplicated data: X5		Operation failed: X9
+X4: No data
+
+PHP-FrontEnd: 01-09
+DB, SQL: 11-19
+	PDO Error: 10
+	Not found: 14
+	Duplicated data: 15
+	Operation failed: 19
 
 Member	[M]
 	Regis	[MR]
@@ -10,15 +17,19 @@ Member	[M]
 		DB insert failed	[19]
 
 	Session	[MS]
-		Missing info	[04]
-		Login failed	[14]
+		Missing Info[04]
+		Login failed		[14]
 
 	Login	[ML]
-		Missing info	[04]
-		Login failed	[14]
+		Missing info		[04]
+		Login failed		[14]
 
 Info	[I]
 	Profile	[IP]
-		Not found		[14]
-	T	[IT]
-		
+		Not found			[14]
+	Map	[IM]
+		Duplicated code		[15]
+		DB insert failed	[19]
+	Table	[IT]
+		Duplicated code		[15]
+		DB insert failed	[19]
