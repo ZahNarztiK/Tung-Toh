@@ -3,16 +3,17 @@
 session_start();
 
 $_IN_SITE = true;
-require_once("../../inc/init_response_func.php");
-
-if(!isset($_SESSION['member_id'])){
-	reject("IT99", "Login gon ai sus!!!");
-}
-
 require_once("../../inc/map_func.php");
 
-$rs = addMap($_POST);
+if(!isset($_SESSION['member_id'])){
+	reject($__MAP_PREFIX, "99", "Login gon ai sus!!!");
+}
+if(!isset($_POST['data'])){
+	reject($__MAP_PREFIX, "04", "No data KUYKUYKUYKUY!!!");
+}
+
+$rs = addMap($_POST['data']);
 set_response($rs);
-success("IT", "Ow pai!");
+success($__MAP_PREFIX, "Ow pai!");
 
 ?>

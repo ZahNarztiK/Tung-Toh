@@ -4,6 +4,8 @@ session_start();
 
 $_IN_SITE = true;
 
+$__REGISTER_PREFIX = "MR";
+
 $_FUNC = "add_member";
 require_once("../../inc/init_login_func.php");
 
@@ -12,6 +14,9 @@ require_once("../../inc/init_login_func.php");
 
 
 function add_member(){
+	global $__REGISTER_PREFIX
+	$prefix = $__REGISTER_PREFIX;
+
 	try{
 		global $DB_PDO;
 
@@ -19,12 +24,12 @@ function add_member(){
 		$password = md5($_POST['password']);
 
 
-		$stmt = $DB_PDO->prepare("SELECT TOP 1 member_id FROM member WHERE email = :email");
+		$stmt = $DB_PDO->prepare("SELECT member_id FROM member WHERE email = :email LIMIT 1");
 		$stmt->bindParam(':email', $email);
 		$stmt->execute();
 
 		if($stmt->rowCount() > 0){
-			reject("MR15", "Mee samak ma laew wa' sorry ;p");
+			reject($prefix, "15", "Mee samak ma laew wa' sorry ;p");
 		}
 
 
@@ -37,7 +42,7 @@ function add_member(){
 
 		$member_id = $DB_PDO->lastInsertId();
 		if($member_id == 0){
-			reject("MR19", "Registration failed.");
+			reject($prefix, "19", "Registration failed.");
 		}
 		
 
@@ -49,26 +54,29 @@ function add_member(){
 
 		set_session($rs);
 		set_login_response();
-		success("MR", "Samuk dai la!");
+		success($prefix, "Samuk dai la!");
 
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject("MR10", $e->getMessage());
+		reject($prefix, "10", $e->getMessage());
 	}
 }
 
 function info_check(){
+	global $__REGISTER_PREFIX;
+	$prefix = $__REGISTER_PREFIX;
+
 	if(!isset($_POST['email']) || !isset($_POST['password'])){
-		reject("MR04", "Kor moon mai krob, ai kuy!!!");
+		reject($prefix, "04", "Kor moon mai krob, ai kuy!!!");
 	}
 
 	if(!valid_email($_POST['email'])){
-		reject("MR04", "Email pid, ai kwai");
+		reject($prefix, "04", "Email pid, ai kwai");
 	}
 
 	if(!valid_password($_POST['email'])){
-		reject("MR04", "Mai me pass, ai har");
+		reject($prefix, "04", "Mai me pass, ai har");
 	}
 }
 

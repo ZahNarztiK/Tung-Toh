@@ -13,15 +13,15 @@ $__RESPONSE = $__DEFAULT_INIT_RESPONSE;
 
 
 
-function reject($message_code, $message){
+function reject($message_code_prefix, $message_code, $message){
 	global $__RESPONSE;
-	set_message($message_code, "Error: $message");
+	set_message($message_code_prefix.$message_code, "Error: $message");
 	die(json_encode($__RESPONSE));
 }
 
-function success($message_code_pre, $message){
+function success($message_code_prefix, $message){
 	global $__RESPONSE;
-	set_message($message_code_pre."00", "Success: $message");
+	set_message($message_code_prefix."00", "Success: $message");
 	die(json_encode($__RESPONSE));
 }
 
@@ -38,7 +38,7 @@ function set_message($message_code, $message_desc){
 
 function set_response($info){
 	global $__RESPONSE;
-	$__RESPONSE['data'] =	$info + $__RESPONSE['data'];
+	$__RESPONSE['data'] = $info + $__RESPONSE['data'];
 }
 
 ?>

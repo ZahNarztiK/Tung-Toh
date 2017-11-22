@@ -42,8 +42,7 @@ Response
 #####Data#####
 
 getProfile.php [GET]
-- member_id (int)
-
+- member_id (int: default - current user)
 
 Response
 "data" : {
@@ -53,6 +52,37 @@ Response
 	"points" (int)
 	"profile_image" (string: url)
 	"email" (string)
+}
+
+----------
+
+addPlace.php [POST]
+{
+*	"name" (string: unique)
+*	"latitude" (string float)
+*	"longitude" (string float)
+	"logo_image" (string: url)
+	"info" (string)
+	
+}
+
+Response
+"data" : {
+	"place_id" (int)
+}
+
+----------
+
+getPlace.php [GET]
+* place_id (int)
+
+Response
+"data" : {
+	"name" (string: unique)
+	"latitude" (string float)
+	"longitude" (string float)
+	"logo_image" (string: url)
+	"info" (string)
 }
 
 ----------
@@ -73,10 +103,38 @@ Response
 
 ----------
 
+getMap.php [GET]
+* map_id / place_id (int)
+
+Response (map_id)
+"data" : {
+	"map_id" (int)
+	"place_id" (int)
+	"width" (int)
+	"height" (int)
+	"name" (string)
+	"bg_image" (string: url)
+}
+
+Response (place_id)
+"data" : {
+	"quantity" (int)
+	"map_list": {
+		{
+			Table data JSON as above
+		}
+		{
+			Table data JSON as above
+		}
+	}
+}
+
+----------
+
 addTable.php [POST]
 {
-*	"code" (string)
 *	"map_id" (int)
+*	"code" (string: unique)
 	"x" (int)
 	"y" (int)
 	"table_type_id" (int)
@@ -85,6 +143,34 @@ addTable.php [POST]
 Response
 "data" : {
 	"table_id" (int)
+}
+
+----------
+
+getTable.php [GET]
+* table_id / map_id (int)
+
+Response (table_id)
+"data" : {
+	"map_id" (int)
+	"place_id" (int)
+	"code" (string: unique)
+	"x" (int)
+	"y" (int)
+	"table_type_id" (int)
+}
+
+Response (map_id)
+"data" : {
+	"quantity" (int)
+	"table_list": {
+		{
+			Table data JSON as above
+		}
+		{
+			Table data JSON as above
+		}
+	}
 }
 
 ----------

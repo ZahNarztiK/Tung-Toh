@@ -4,6 +4,7 @@ AccessDenied: 99
 X4: No data
 
 PHP-FrontEnd: 01-09
+	Info Missing/Error: 04
 DB, SQL: 11-19
 	PDO Error: 10
 	Not found: 14
@@ -12,7 +13,7 @@ DB, SQL: 11-19
 
 Member	[M]
 	Regis	[MR]
-		Missing info	[04]
+		Missing info		[04]
 		Duplicated email	[15]
 		DB insert failed	[19]
 
@@ -25,11 +26,16 @@ Member	[M]
 		Login failed		[14]
 
 Info	[I]
-	Profile	[IP]
+	Profile	[IU]
 		Not found			[14]
+	Place [IP]
+		Missing info		[04]
+		Duplicated name		[15]
+		DB insert failed	[19]
 	Map	[IM]
-		Duplicated code		[15]
+		Missing info		[04]
 		DB insert failed	[19]
 	Table	[IT]
+		Missing info		[04]
 		Duplicated code		[15]
 		DB insert failed	[19]

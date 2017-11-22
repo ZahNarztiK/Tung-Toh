@@ -4,6 +4,8 @@ session_start();
 
 $_IN_SITE = true;
 
+$__LOGIN_PREFIX = "ML";
+
 $_FUNC = "login";
 require_once("../../inc/init_login_func.php");
 
@@ -12,6 +14,9 @@ require_once("../../inc/init_login_func.php");
 
 
 function login(){
+	global $__LOGIN_PREFIX;
+	$prefix = $__LOGIN_PREFIX;
+
 	try{
 		global $DB_PDO;
 
@@ -19,13 +24,13 @@ function login(){
 		$password = md5($_POST['password']);
 		
 
-		$stmt = $DB_PDO->prepare("SELECT TOP 1 member_id, email, session_id FROM member WHERE email = :email and password = :password");
+		$stmt = $DB_PDO->prepare("SELECT member_id, email, session_id FROM member WHERE email = :email and password = :password LIMIT 1");
 		$stmt->bindParam(':email', $email);
 		$stmt->bindParam(':password', $password);
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject("ML14", "Login pid, ai kuy!!!");
+			reject($prefix, "14", "Login pid, ai kuy!!!");
 		}
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -41,26 +46,29 @@ function login(){
 		
 		set_session($rs);
 		set_login_response();
-		success("ML", "Login dai la!");
+		success($prefix, "Login dai la!");
 
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject("ML10", $e->getMessage());
+		reject($prefix, "10", $e->getMessage());
 	}
 }
 
 function info_check(){
+	global $__LOGIN_PREFIX;
+	$prefix = $__LOGIN_PREFIX;
+
 	if(!isset($_POST['email']) || !isset($_POST['password'])){
-		reject("ML04", "Kor moon mai krob, ai kuy!!!");
+		reject($prefix, "04", "Kor moon mai krob, ai kuy!!!");
 	}
 
 	if(!valid_email($_POST['email'])){
-		reject("ML04", "Email pid, ai kwai");
+		reject($prefix, "04", "Email pid, ai kwai");
 	}
 
 	if(!valid_password($_POST['email'])){
-		reject("ML04", "Mai me pass, ai har");
+		reject($prefix, "04", "Mai me pass, ai har");
 	}
 }
 
