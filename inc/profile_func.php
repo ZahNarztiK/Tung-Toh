@@ -19,7 +19,7 @@ function getProfile($member_id){
 		global $DB_PDO;
 
 
-		$stmt = $DB_PDO->prepare("SELECT firstname, lastname, level, points, profile_image, email FROM member WHERE member_id = :member_id LIMIT 1");
+		$stmt = $DB_PDO->prepare("SELECT verified, firstname, lastname, level, points, profile_image, email FROM member WHERE member_id = :member_id LIMIT 1");
 		$stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
 		$stmt->execute();
 		

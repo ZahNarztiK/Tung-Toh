@@ -3,11 +3,10 @@
 session_start();
 
 $_IN_SITE = true;
+require_once("../../inc/access_func.php");
 require_once("../../inc/map_func.php");
 
-if(!isset($_SESSION['member_id'])){
-	reject($__MAP_PREFIX, "99", "Login gon ai sus!!!");
-}
+access_check($__MAP_PREFIX);
 
 if(isset($_GET['map_id']) && !is_nan($_GET['map_id']) && $_GET['map_id'] > 0){
 	$rs = getMap($_GET['map_id']);

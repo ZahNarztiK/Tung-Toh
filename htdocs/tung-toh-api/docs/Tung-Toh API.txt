@@ -39,13 +39,14 @@ Response
 	"logged_out" (bool: logged in before)
 }
 
-#####Data#####
+#####Data##### [Log in required; Admin required for adding data]
 
 getProfile.php [GET]
 - member_id (int: default - current user)
 
 Response
 "data" : {
+	"verified" (int) [0: Not verified, 1: Verified member, 2: Admin]
 	"firstname" (string)
 	"lastname" (string)
 	"level" (int)

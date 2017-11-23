@@ -24,7 +24,7 @@ function login(){
 		$password = md5($_POST['password']);
 		
 
-		$stmt = $DB_PDO->prepare("SELECT member_id, email, session_id FROM member WHERE email = :email and password = :password LIMIT 1");
+		$stmt = $DB_PDO->prepare("SELECT member_id, email, session_id, verified FROM member WHERE email = :email and password = :password LIMIT 1");
 		$stmt->bindParam(':email', $email);
 		$stmt->bindParam(':password', $password);
 		$stmt->execute();

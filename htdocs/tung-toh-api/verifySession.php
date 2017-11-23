@@ -23,7 +23,7 @@ function verifySession(){
 		$session_id = $_POST['session_id'];
 		
 		
-		$stmt = $DB_PDO->prepare("SELECT member_id, email FROM member WHERE (session_id = :session_id) LIMIT 1");
+		$stmt = $DB_PDO->prepare("SELECT member_id, email, verified FROM member WHERE (session_id = :session_id) LIMIT 1");
 		$stmt->bindParam(':session_id', $session_id);
 		$stmt->execute();
 		

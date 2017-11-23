@@ -14,7 +14,7 @@ require_once("../../inc/init_login_func.php");
 
 
 function add_member(){
-	global $__REGISTER_PREFIX
+	global $__REGISTER_PREFIX;
 	$prefix = $__REGISTER_PREFIX;
 
 	try{
@@ -49,7 +49,8 @@ function add_member(){
 		$rs =	[
 					"member_id" => $member_id,
 					"email" => $email,
-					"session_id" => $session_id
+					"session_id" => $session_id,
+					"verified" => 0
 				];
 
 		set_session($rs);
