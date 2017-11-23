@@ -46,7 +46,7 @@ getProfile.php [GET]
 
 Response
 "data" : {
-	"verified" (int) [0: Not verified, 1: Verified member, 2: Admin]
+	"verified" (int) [0: Not verified, 1: Verified member, 9: Admin]
 	"firstname" (string)
 	"lastname" (string)
 	"level" (int)
@@ -59,6 +59,24 @@ Response
 
 addPlace.php [POST]
 {
+*	"name" (string: unique)
+*	"latitude" (string float)
+*	"longitude" (string float)
+	"logo_image" (string: url)
+	"info" (string)
+	
+}
+
+Response
+"data" : {
+	"place_id" (int)
+}
+
+----------
+
+editPlace.php [POST]
+{
+*	"place_id" (int)
 *	"name" (string: unique)
 *	"latitude" (string float)
 *	"longitude" (string float)
@@ -88,9 +106,43 @@ Response
 
 ----------
 
+removePlace.php [GET]
+*  place_id (int)
+
+Response (place_id)
+"data" : {
+	"place_id" (int)
+	"map_deleted" : {
+		"quantity" (int)
+		"table_deleted" : {
+			"place_id" (int)
+			"quantity" (int)
+		}
+	}
+		
+}
+
+----------
+
 addMap.php [POST]
 {
 *	"place_id" (int)
+*	"width" (int)
+*	"height" (int)
+	"name" (string)
+	"bg_image" (string: url)
+}
+
+Response
+"data" : {
+	"map_id" (int)
+}
+
+----------
+
+editMap.php [POST]
+{
+*	"map_id" (int)
 *	"width" (int)
 *	"height" (int)
 	"name" (string)
@@ -132,13 +184,53 @@ Response (place_id)
 
 ----------
 
+removeMap.php [GET]
+*  map_id / place_id (int)
+
+Response (map_id)
+"data" : {
+	"map_id" (int)
+	"table_deleted" : {
+		"map_id" (int)
+		"quantity" (int)
+	}
+}
+
+Response (place_id)
+"data" : {
+	"place_id" (int)
+	"quantity" (int)
+	"table_deleted" : {
+		"place_id" (int)
+		"quantity" (int)
+	}
+}
+
+----------
+
 addTable.php [POST]
 {
 *	"map_id" (int)
 *	"code" (string: unique)
-	"x" (int)
-	"y" (int)
-	"table_type_id" (int)
+	"x" (int: default = 0)
+	"y" (int: default = 0)
+	"table_type_id" (int: default = 0)
+}
+
+Response
+"data" : {
+	"table_id" (int)
+}
+
+----------
+
+editTable.php [POST]
+{
+*	"table_id" (int)
+*	"code" (string: unique)
+	"x" (int: default = 0)
+	"y" (int: default = 0)
+	"table_type_id" (int: default = 0)
 }
 
 Response
@@ -172,6 +264,22 @@ Response (map_id)
 			Table data JSON as above
 		}
 	}
+}
+
+----------
+
+removeTable.php [GET]
+* table_id / map_id / place_id (int)
+
+Response (table_id)
+"data" : {
+	"table_id" (int)
+}
+
+Response (map_id / place_id)
+"data" : {
+	"map_id" / "place_id" (int)
+	"quantity" (int)
 }
 
 ----------

@@ -8,8 +8,8 @@ require_once("../../inc/place_func.php");
 
 access_check($__PLACE_PREFIX, $__ACCESS_ADMIN, true);
 
-$rs = addPlace($_POST['data']);
+$rs = editPlace($_POST['data']);
 set_response($rs);
-success($__PLACE_PREFIX, "Add hai la!");
+success($__PLACE_PREFIX, "Edit laew woi~");
 
 ?>

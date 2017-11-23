@@ -8,8 +8,8 @@ require_once("../../inc/table_func.php");
 
 access_check($__TABLE_PREFIX, $__ACCESS_ADMIN, true);
 
-$rs = addTable($_POST['data']);
+$rs = editTable($_POST['data']);
 set_response($rs);
-success($__TABLE_PREFIX, "Add hai la!");
+success($__TABLE_PREFIX, "Edit laew woi~");
 
 ?>

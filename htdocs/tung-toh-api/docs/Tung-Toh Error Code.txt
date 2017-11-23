@@ -1,12 +1,14 @@
 Success: 00
-AccessDenied: 99
+AccessDenied:
+	Low previlege: 90
+	Not logged in: 99
 
 X4: No data
 
 PHP-FrontEnd: 01-09
 	Info Missing/Error: 04
 DB, SQL: 11-19
-	PDO Error: 10
+	PDO error: 10
 	Not found: 14
 	Duplicated data: 15
 	Operation failed: 19
@@ -37,5 +39,6 @@ Info	[I]
 		DB insert failed	[19]
 	Table	[IT]
 		Missing info		[04]
+		PHP parameter error	[09]
 		Duplicated code		[15]
 		DB insert failed	[19]

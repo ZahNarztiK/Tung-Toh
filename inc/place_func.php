@@ -7,6 +7,8 @@ if(!isset($_IN_SITE)){
 require_once("../../inc/db_connect.php");
 require_once("../../inc/init_response_func.php");
 require_once("../../inc/json_func.php");
+require_once("../../inc/map_func.php");
+require_once("../../inc/table_func.php");
 
 $__PLACE_PREFIX = "IP";
 $__PLACE_DEFAULT = [
@@ -62,6 +64,56 @@ function addPlace($place_raw){
 	}
 }
 
+function editPlace($place_raw){
+	global $__PLACE_PREFIX;
+	$prefix = $__PLACE_PREFIX;
+
+	try{
+		global $DB_PDO;
+
+		$place = prepareData($place_raw, true);
+
+
+		$stmt = $DB_PDO->prepare("SELECT place_id FROM place WHERE place_id = :place_id LIMIT 1");
+		$stmt->bindParam(':place_id', $place['place_id']);
+		$stmt->execute();
+		
+		if($stmt->rowCount() == 0){
+			reject($prefix, "14", "Place not found.");
+		}
+
+
+		$stmt = $DB_PDO->prepare("SELECT place_id FROM place WHERE name = :name AND place_id != :place_id LIMIT 1");
+		$stmt->bindParam(':name', $place['name']);
+		$stmt->bindParam(':place_id', $place['place_id']);
+		$stmt->execute();
+		
+		if($stmt->rowCount() > 0){
+			reject($prefix, "15", "Duplicated name.");
+		}
+
+
+		$stmt = $DB_PDO->prepare("UPDATE place SET name = :name, location = POINT(:x, :y), logo_image = :logo_image, info = :info WHERE place_id = :place_id");
+		$stmt->bindParam(':name', $place['name']);
+		$stmt->bindParam(':x', $place['latitude']);
+		$stmt->bindParam(':y', $place['longitude']);
+		$stmt->bindParam(':logo_image', $place['logo_image']);
+		$stmt->bindParam(':info', $place['info']);
+		$stmt->bindParam(':place_id', $place['place_id']);
+		$stmt->execute();
+		
+		
+		$rs = [
+			"place_id" => $place['place_id']
+		];
+
+		return $rs;
+	}
+	catch(PDOException $e){
+		reject($prefix, "10", $e->getMessage());
+	}
+}
+
 function getPlace($place_id){
 	try{
 		global $DB_PDO;
@@ -84,7 +136,36 @@ function getPlace($place_id){
 	}
 }
 
-function prepareData($place_raw){
+function removePlace($place_id){
+	global $__PLACE_PREFIX;
+	$prefix = $__PLACE_PREFIX;
+
+	$map_deleted = removeMapList($place_id);
+
+	try{
+		global $DB_PDO;
+
+		$stmt = $DB_PDO->prepare("DELETE FROM place WHERE place_id = :place_id");
+		$stmt->bindParam(':place_id', $place_id, PDO::PARAM_INT);
+		$stmt->execute();
+		
+		if($stmt->rowCount() == 0){
+			reject($prefix, "14", "Location not found.");
+		}
+		
+		$rs = [
+			"place_id" => $place_id,
+			"map_deleted" => $map_deleted
+		];
+
+		return $rs;
+	}
+	catch(PDOException $e){
+		reject($prefix, "10", $e->getMessage());
+	}
+}
+
+function prepareData($place_raw, $isEdit = false){
 	global $__PLACE_PREFIX, $__PLACE_DEFAULT;
 
 	$error = [];
@@ -93,6 +174,9 @@ function prepareData($place_raw){
 	$place = prepareJSON($prefix, $place_raw, $__PLACE_DEFAULT);
 
 
+	if($isEdit && (!isset($place['place_id']) || is_nan($place['place_id']) || $place['place_id'] <= 0)){
+		$error[] = "Place ID";
+	}
 	$place['name'] = trim($place['name']);
 	if($place['name'] == ""){
 		$error[] = "Name";
