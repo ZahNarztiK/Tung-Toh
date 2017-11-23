@@ -28,7 +28,7 @@ function addPlace($place_raw){
 	try{
 		global $DB_PDO;
 
-		$place = prepareData($place_raw);
+		$place = preparePlaceData($place_raw);
 
 
 		$stmt = $DB_PDO->prepare("SELECT place_id FROM place WHERE name = :name LIMIT 1");
@@ -71,7 +71,7 @@ function editPlace($place_raw){
 	try{
 		global $DB_PDO;
 
-		$place = prepareData($place_raw, true);
+		$place = preparePlaceData($place_raw, true);
 
 
 		$stmt = $DB_PDO->prepare("SELECT place_id FROM place WHERE place_id = :place_id LIMIT 1");
@@ -124,7 +124,7 @@ function getPlace($place_id){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "No info.");
+			reject($prefix, "14", "Place not found.");
 		}
 		
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -165,7 +165,7 @@ function removePlace($place_id){
 	}
 }
 
-function prepareData($place_raw, $isEdit = false){
+function preparePlaceData($place_raw, $isEdit = false){
 	global $__PLACE_PREFIX, $__PLACE_DEFAULT;
 
 	$error = [];

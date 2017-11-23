@@ -17,7 +17,7 @@ function access_check($prefix, $previlege = 0, $DataRequired = false){
 	if(!isset($_SESSION['verified'])){
 		reject($prefix, "99", "Login gon ai sus!!!");
 	}
-	if($_SESSION['verified'] < $previlege)){
+	if($_SESSION['verified'] < $previlege){
 		reject($prefix, "90", "Access denied, eiei olo.");
 	}
 	if($DataRequired && !isset($_POST['data'])){

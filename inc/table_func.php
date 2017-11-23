@@ -25,7 +25,7 @@ function addTable($table_raw){
 	try{
 		global $DB_PDO;
 
-		$table = prepareData($table_raw);
+		$table = prepareTableData($table_raw);
 
 
 		$stmt = $DB_PDO->prepare("SELECT place_id FROM map WHERE map_id = :map_id LIMIT 1");
@@ -80,7 +80,7 @@ function editTable($table_raw){
 	try{
 		global $DB_PDO;
 
-		$table = prepareData($table_raw, true);
+		$table = prepareTableData($table_raw, true);
 
 
 		$stmt = $DB_PDO->prepare("SELECT table_id FROM `table` WHERE table_id = :table_id LIMIT 1");
@@ -157,6 +157,16 @@ function getTableList($map_id){
 	try{
 		global $DB_PDO;
 
+
+		$stmt = $DB_PDO->prepare("SELECT map_id FROM map WHERE map_id = :map_id LIMIT 1");
+		$stmt->bindParam(':map_id', $map_id, PDO::PARAM_INT);
+		$stmt->execute();
+		
+		if($stmt->rowCount() == 0){
+			reject($prefix, "14", "Map not found.");
+		}
+
+
 		$stmt = $DB_PDO->prepare("SELECT table_id, map_id, place_id, code, X(location) as x, Y(location) as y, table_type_id FROM `table` WHERE map_id = :map_id");
 		$stmt->bindParam(':map_id', $map_id, PDO::PARAM_INT);
 		$stmt->execute();
@@ -227,7 +237,7 @@ function removeTableList($identifier, $identifier_id){
 	}
 }
 
-function prepareData($table_raw, $isEdit = false){
+function prepareTableData($table_raw, $isEdit = false){
 	global $__TABLE_PREFIX, $__TABLE_DEFAULT;
 
 	$error = [];

@@ -1,8 +1,11 @@
 <?
 
-session_start();
-
-$_IN_SITE = true;
+if(!isset($_IN_SITE)){
+	die("Access denied ai sus!!!");
+}
+if(!isset($_SESSION)){
+	session_start();
+}
 
 $__VERIFYSESSION_PREFIX = "MS";
 

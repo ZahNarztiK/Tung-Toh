@@ -27,7 +27,7 @@ function addMap($map_raw){
 	try{
 		global $DB_PDO;
 
-		$map = prepareData($map_raw);
+		$map = prepareMapData($map_raw);
 
 
 		$stmt = $DB_PDO->prepare("SELECT place_id FROM place WHERE place_id = :place_id LIMIT 1");
@@ -71,7 +71,7 @@ function editMap($map_raw){
 	try{
 		global $DB_PDO;
 
-		$map = prepareData($map_raw, true);
+		$map = prepareMapData($map_raw, true);
 
 
 		$stmt = $DB_PDO->prepare("SELECT map_id FROM map WHERE map_id = :map_id LIMIT 1");
@@ -117,7 +117,7 @@ function getMap($map_id){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "No info.");
+			reject($prefix, "14", "Map not found.");
 		}
 		
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -135,6 +135,15 @@ function getMapList($place_id){
 
 	try{
 		global $DB_PDO;
+
+		$stmt = $DB_PDO->prepare("SELECT place_id FROM place WHERE place_id = :place_id LIMIT 1");
+		$stmt->bindParam(':place_id', $place_id, PDO::PARAM_INT);
+		$stmt->execute();
+		
+		if($stmt->rowCount() == 0){
+			reject($prefix, "14", "Location not found.");
+		}
+
 
 		$stmt = $DB_PDO->prepare("SELECT map_id, place_id, width, height, name, info, bg_image FROM map WHERE place_id = :place_id");
 		$stmt->bindParam(':place_id', $place_id, PDO::PARAM_INT);
@@ -207,7 +216,7 @@ function removeMapList($place_id){
 	}
 }
 
-function prepareData($map_raw, $isEdit = false){
+function prepareMapData($map_raw, $isEdit = false){
 	global $__MAP_PREFIX, $__MAP_DEFAULT;
 
 	$error = [];

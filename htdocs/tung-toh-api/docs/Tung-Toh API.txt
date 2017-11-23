@@ -6,15 +6,16 @@ Default Response JSON
 }
 
 All data will be received & returned in JSON named "data", except register, login, & GET input.
+Data: Method is required in GET form; method=[add/edit/remove]
 
 * Required
 ##### Member #####
 
-register.php, login.php [POST]
+member.php?method=register, member.php?method=login [POST]
 * "email" (string)
 * "password" (string)
 
-verifySession.php [POST]
+member.php?method=verifySession [POST]
 * "session_id" (string)
 
 
@@ -32,7 +33,7 @@ Response (Failed)
 
 ----------
 
-logout.php
+member.php?method=logout
 
 Response
 "data" : {
@@ -41,7 +42,7 @@ Response
 
 #####Data##### [Log in required; Admin required for adding data]
 
-getProfile.php [GET]
+profile.php?method=get [GET]
 - member_id (int: default - current user)
 
 Response
@@ -57,7 +58,7 @@ Response
 
 ----------
 
-addPlace.php [POST]
+place.php?method=add [POST]
 {
 *	"name" (string: unique)
 *	"latitude" (string float)
@@ -74,7 +75,7 @@ Response
 
 ----------
 
-editPlace.php [POST]
+place.php?method=edit [POST]
 {
 *	"place_id" (int)
 *	"name" (string: unique)
@@ -92,7 +93,7 @@ Response
 
 ----------
 
-getPlace.php [GET]
+place.php?method=get [GET]
 * place_id (int)
 
 Response
@@ -106,7 +107,7 @@ Response
 
 ----------
 
-removePlace.php [GET]
+place.php?method=remove [GET]
 *  place_id (int)
 
 Response (place_id)
@@ -124,7 +125,7 @@ Response (place_id)
 
 ----------
 
-addMap.php [POST]
+map.php?method=add [POST]
 {
 *	"place_id" (int)
 *	"width" (int)
@@ -140,7 +141,7 @@ Response
 
 ----------
 
-editMap.php [POST]
+map.php?method=edit [POST]
 {
 *	"map_id" (int)
 *	"width" (int)
@@ -156,7 +157,7 @@ Response
 
 ----------
 
-getMap.php [GET]
+map.php?method=get [GET]
 * map_id / place_id (int)
 
 Response (map_id)
@@ -184,7 +185,7 @@ Response (place_id)
 
 ----------
 
-removeMap.php [GET]
+map.php?method=remove [GET]
 *  map_id / place_id (int)
 
 Response (map_id)
@@ -208,7 +209,7 @@ Response (place_id)
 
 ----------
 
-addTable.php [POST]
+table.php?method=add [POST]
 {
 *	"map_id" (int)
 *	"code" (string: unique)
@@ -224,7 +225,7 @@ Response
 
 ----------
 
-editTable.php [POST]
+table.php?method=edit [POST]
 {
 *	"table_id" (int)
 *	"code" (string: unique)
@@ -240,7 +241,7 @@ Response
 
 ----------
 
-getTable.php [GET]
+table.php?method=get [GET]
 * table_id / map_id (int)
 
 Response (table_id)
@@ -268,7 +269,7 @@ Response (map_id)
 
 ----------
 
-removeTable.php [GET]
+table.php?method=remove [GET]
 * table_id / map_id / place_id (int)
 
 Response (table_id)

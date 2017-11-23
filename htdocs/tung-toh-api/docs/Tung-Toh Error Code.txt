@@ -18,7 +18,6 @@ Member	[M]
 		Missing info		[04]
 		Duplicated email	[15]
 		DB insert failed	[19]
-
 	Session	[MS]
 		Missing Info[04]
 		Login failed		[14]
