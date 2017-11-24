@@ -25,14 +25,20 @@ switch($_GET['method']){
 		
 		$success_msg = "Edit laew woi~";
 		break;
+	case "getall":
+		$getAll = true;
 	case "get":
 		access_check($__MAP_PREFIX);
 
-		if(isset($_GET['map_id']) && !is_nan($_GET['map_id']) && $_GET['map_id'] > 0){
-			$rs = getMap($_GET['map_id']);
+		if(!isset($getAll)){
+			$getAll = false;
 		}
-		elseif (isset($_GET['place_id']) && !is_nan($_GET['place_id']) && $_GET['place_id'] > 0) {
-			$rs = getMapList($_GET['place_id']);
+
+		if(isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])){
+			$rs = getMap($_GET['map_id'], $getAll);
+		}
+		elseif (isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])) {
+			$rs = getMapList($_GET['place_id'], $getAll);
 		}
 		else{
 			reject($__MAP_PREFIX, "04", "Map/Place ID????");
@@ -43,10 +49,10 @@ switch($_GET['method']){
 	case "remove":
 		access_check($__MAP_PREFIX, $__ACCESS_ADMIN);
 
-		if(isset($_GET['map_id']) && !is_nan($_GET['map_id']) && $_GET['map_id'] > 0){
+		if(isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])){
 			$rs = removeMap($_GET['map_id']);
 		}
-		elseif (isset($_GET['place_id']) && !is_nan($_GET['place_id']) && $_GET['place_id'] > 0) {
+		elseif (isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])) {
 			$rs = removeMapList($_GET['place_id']);
 		}
 		else{

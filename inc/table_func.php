@@ -6,7 +6,7 @@ if(!isset($_IN_SITE)){
 
 require_once("../../inc/db_connect.php");
 require_once("../../inc/init_response_func.php");
-require_once("../../inc/json_func.php");
+require_once("../../inc/basic_func.php");
 
 $__TABLE_PREFIX = "IT";
 $__TABLE_DEFAULT = [
@@ -214,7 +214,7 @@ function removeTableList($identifier, $identifier_id){
 	$prefix = $__TABLE_PREFIX;
 	$identifier_list = ["map_id", "place_id"];
 
-	if(!in_array($identifier, $identifier_list) || is_nan($identifier_id) || $identifier_id <= 0){
+	if(!in_array($identifier, $identifier_list) || notPositiveInt($identifier_id)){
 		reject($prefix, "09", "Identifier error.");
 	}
 
@@ -246,10 +246,10 @@ function prepareTableData($table_raw, $isEdit = false){
 	$table = prepareJSON($prefix, $table_raw, $__TABLE_DEFAULT);
 
 
-	if($isEdit && (!isset($table['table_id']) || is_nan($table['table_id']) || $table['table_id'] <= 0)){
+	if($isEdit && (!isset($table['table_id']) || notPositiveInt($table['table_id']))){
 		$error[] = "Table ID";
 	}
-	if(!$isEdit && (!isset($table['map_id']) || is_nan($table['map_id']) || $table['map_id'] <= 0)){
+	if(!$isEdit && (!isset($table['map_id']) || notPositiveInt($table['map_id']))){
 		$error[] = "Map ID";
 	}
 	$table['code'] = trim($table['code']);
@@ -268,7 +268,7 @@ function prepareTableData($table_raw, $isEdit = false){
 	if(is_nan($table['y'])){
 		$table['y'] = $__TABLE_DEFAULT['y'];
 	}
-	if(is_nan($table['table_type_id']) || $table['table_type_id'] <= 0){
+	if(notPositiveInt($table['table_type_id'])){
 		$table['table_type_id'] = $__TABLE_DEFAULT['table_type_id'];
 	}
 

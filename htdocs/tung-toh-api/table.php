@@ -28,10 +28,10 @@ switch($_GET['method']){
 	case "get":
 		access_check($__TABLE_PREFIX);
 
-		if(isset($_GET['table_id']) && !is_nan($_GET['table_id']) && $_GET['table_id'] > 0){
+		if(isset($_GET['table_id']) && isPositiveInt($_GET['table_id'])){
 			$rs = getTable($_GET['table_id']);
 		}
-		elseif (isset($_GET['map_id']) && !is_nan($_GET['map_id']) && $_GET['map_id'] > 0) {
+		elseif (isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])) {
 			$rs = getTableList($_GET['map_id']);
 		}
 		else{
@@ -43,13 +43,13 @@ switch($_GET['method']){
 	case "remove":
 		access_check($__TABLE_PREFIX, $__ACCESS_ADMIN);
 
-		if(isset($_GET['table_id']) && !is_nan($_GET['table_id']) && $_GET['table_id'] > 0){
+		if(isset($_GET['table_id']) && isPositiveInt($_GET['table_id'])){
 			$rs = removeTable($_GET['table_id']);
 		}
-		elseif (isset($_GET['map_id']) && !is_nan($_GET['map_id']) && $_GET['map_id'] > 0) {
+		elseif (isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])) {
 			$rs = removeTableList("map_id", $_GET['map_id']);
 		}
-		elseif (isset($_GET['place_id']) && !is_nan($_GET['place_id']) && $_GET['place_id'] > 0) {
+		elseif (isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])) {
 			$rs = removeTableList("place_id", $_GET['place_id']);
 		}
 		else{

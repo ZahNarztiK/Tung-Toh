@@ -26,25 +26,33 @@ switch($_GET['method']){
 		
 		$success_msg = "Edit laew woi~";
 		break;
+	case "getall":
+		$getAll = true;
 	case "get":
 		access_check($__PLACE_PREFIX);
 
-		if(!isset($_GET['place_id']) || is_nan($_GET['place_id']) || $_GET['place_id'] <= 0){
-			reject($__PLACE_PREFIX, "04", "Place ID????");
+		if(!isset($getAll)){
+			$getAll = false;
 		}
 
-		$rs = getPlace($_GET['place_id']);
+		if(isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])){
+			$rs = getPlace($_GET['place_id'], $getAll);
+		}
+		else{
+			reject($__PLACE_PREFIX, "04", "Place ID????");
+		}
 
 		$success_msg = "Ow pai!";
 		break;
 	case "remove":
 		access_check($__PLACE_PREFIX, $__ACCESS_ADMIN);
 
-		if(!isset($_GET['place_id']) || is_nan($_GET['place_id']) || $_GET['place_id'] <= 0){
+		if(isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])){
+			$rs = removePlace($_GET['place_id']);
+		}
+		else{
 			reject($__PLACE_PREFIX, "04", "Place ID????");
 		}
-
-		$rs = removePlace($_GET['place_id']);
 
 		$success_msg = "Lob la na jaa!";
 		break;

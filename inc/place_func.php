@@ -6,7 +6,7 @@ if(!isset($_IN_SITE)){
 
 require_once("../../inc/db_connect.php");
 require_once("../../inc/init_response_func.php");
-require_once("../../inc/json_func.php");
+require_once("../../inc/basic_func.php");
 require_once("../../inc/map_func.php");
 require_once("../../inc/table_func.php");
 
@@ -114,7 +114,10 @@ function editPlace($place_raw){
 	}
 }
 
-function getPlace($place_id){
+function getPlace($place_id, $getAll = false){
+	global $__PLACE_PREFIX;
+	$prefix = $__PLACE_PREFIX;
+
 	try{
 		global $DB_PDO;
 
@@ -126,13 +129,19 @@ function getPlace($place_id){
 		if($stmt->rowCount() == 0){
 			reject($prefix, "14", "Place not found.");
 		}
-		
+
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+		if($getAll){
+			$rs['map'] = getMapList($rs['place_id'], true);
+		}
+
 		
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($e->getMessage());
+		reject($prefix, "10", $e->getMessage());
 	}
 }
 
@@ -174,7 +183,7 @@ function preparePlaceData($place_raw, $isEdit = false){
 	$place = prepareJSON($prefix, $place_raw, $__PLACE_DEFAULT);
 
 
-	if($isEdit && (!isset($place['place_id']) || is_nan($place['place_id']) || $place['place_id'] <= 0)){
+	if($isEdit && (!isset($place['place_id']) || notPositiveInt($place['place_id']))){
 		$error[] = "Place ID";
 	}
 	$place['name'] = trim($place['name']);

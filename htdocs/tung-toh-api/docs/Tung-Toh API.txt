@@ -43,7 +43,7 @@ Response
 #####Data##### [Log in required; Admin required for adding data]
 
 profile.php?method=get [GET]
-- member_id (int: default - current user)
+- "member_id" (int: default - current user)
 
 Response
 "data" : {
@@ -58,6 +58,77 @@ Response
 
 ----------
 
+event.php?method=add [POST]
+{
+*	"name" (string)
+*	"place_id" (int)
+*	"date" (int timestamp in second)
+	"info" (string)
+	"image" (string: url)
+}
+
+Response
+"data" : {
+	"event_id" (int)
+}
+
+----------
+
+event.php?method=edit [POST]
+{
+*	"event_id" (int)
+*	"name" (string)
+*	"place_id" (int)
+*	"date" (int timestamp in second)
+	"info" (string)
+	"image" (string: url)
+}
+
+Response
+"data" : {
+	"event_id" (int)
+}
+
+----------
+
+event.php?method=get [GET]
+*	"event_id" / "place_id" (int)
+
+[Event Data] Response (event_id)
+"data" : {
+	"event_id" (int)
+	"name" (string)
+	"place_id" (int)
+	"date" (int timestamp in second)
+	"info" (string)
+	"image" (string: url)
+}
+
+[Event List Data] Response (place_id)
+"data" : {
+	"quantity" (int)
+	"event_list": {
+		{
+			Event Data JSON
+		}
+		{
+			Event Data JSON
+		}
+	}
+}
+
+----------
+
+event.php?method=remove [GET]
+*  "event_id" (int)
+
+Response
+"data" : {
+	"event_id" (int)
+}
+
+----------
+
 place.php?method=add [POST]
 {
 *	"name" (string: unique)
@@ -65,7 +136,6 @@ place.php?method=add [POST]
 *	"longitude" (string float)
 	"logo_image" (string: url)
 	"info" (string)
-	
 }
 
 Response
@@ -83,7 +153,6 @@ place.php?method=edit [POST]
 *	"longitude" (string float)
 	"logo_image" (string: url)
 	"info" (string)
-	
 }
 
 Response
@@ -94,10 +163,11 @@ Response
 ----------
 
 place.php?method=get [GET]
-* place_id (int)
+* "place_id" (int)
 
-Response
+[Place Data] Response
 "data" : {
+	"place_id" (int)
 	"name" (string: unique)
 	"latitude" (string float)
 	"longitude" (string float)
@@ -107,10 +177,23 @@ Response
 
 ----------
 
-place.php?method=remove [GET]
-*  place_id (int)
+place.php?method=getall [GET]
+* "place_id" (int)
 
-Response (place_id)
+[Place All Data] Response
+"data" : {
+	Place data JSON
+	map : {
+		Map List & Table List data JSON
+	}
+}
+
+----------
+
+place.php?method=remove [GET]
+* "place_id" (int)
+
+Response
 "data" : {
 	"place_id" (int)
 	"map_deleted" : {
@@ -120,7 +203,6 @@ Response (place_id)
 			"quantity" (int)
 		}
 	}
-		
 }
 
 ----------
@@ -158,9 +240,9 @@ Response
 ----------
 
 map.php?method=get [GET]
-* map_id / place_id (int)
+* "map_id" / "place_id" (int)
 
-Response (map_id)
+[Map Data] Response (map_id)
 "data" : {
 	"map_id" (int)
 	"place_id" (int)
@@ -170,15 +252,41 @@ Response (map_id)
 	"bg_image" (string: url)
 }
 
-Response (place_id)
+[Map List Data] Response (place_id)
 "data" : {
 	"quantity" (int)
 	"map_list": {
 		{
-			Table data JSON as above
+			Map Data JSON
 		}
 		{
-			Table data JSON as above
+			Map Data JSON
+		}
+	}
+}
+
+----------
+
+map.php?method=getall [GET]
+* "map_id" / "place_id" (int)
+
+[Map & Table Data] Response (map_id)
+"data" : {
+	Map data JSON
+	table : {
+		Table List data JSON
+	}
+}
+
+[Map & Table List Data] Response (place_id)
+"data" : {
+	"quantity" (int)
+	"map_list": {
+		{
+			Map & Table Data JSON
+		}
+		{
+			Map & Table Data JSON
 		}
 	}
 }
@@ -186,7 +294,7 @@ Response (place_id)
 ----------
 
 map.php?method=remove [GET]
-*  map_id / place_id (int)
+*  "map_id" / "place_id" (int)
 
 Response (map_id)
 "data" : {
@@ -242,10 +350,11 @@ Response
 ----------
 
 table.php?method=get [GET]
-* table_id / map_id (int)
+* "table_id" / "map_id" (int)
 
-Response (table_id)
+[Table Data] Response (table_id)
 "data" : {
+	"table_id" (int)
 	"map_id" (int)
 	"place_id" (int)
 	"code" (string: unique)
@@ -254,15 +363,15 @@ Response (table_id)
 	"table_type_id" (int)
 }
 
-Response (map_id)
+[Table List Data] Response (map_id)
 "data" : {
 	"quantity" (int)
 	"table_list": {
 		{
-			Table data JSON as above
+			Table Data JSON
 		}
 		{
-			Table data JSON as above
+			Table Data JSON
 		}
 	}
 }
@@ -270,7 +379,7 @@ Response (map_id)
 ----------
 
 table.php?method=remove [GET]
-* table_id / map_id / place_id (int)
+* "table_id" / "map_id" / "place_id" (int)
 
 Response (table_id)
 "data" : {

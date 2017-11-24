@@ -6,7 +6,7 @@ if(!isset($_IN_SITE)){
 
 require_once("../../inc/db_connect.php");
 require_once("../../inc/init_response_func.php");
-require_once("../../inc/json_func.php");
+require_once("../../inc/basic_func.php");
 require_once("../../inc/table_func.php");
 
 $__MAP_PREFIX = "IM";
@@ -104,7 +104,7 @@ function editMap($map_raw){
 	}
 }
 
-function getMap($map_id){
+function getMap($map_id, $getAll = false){
 	global $__MAP_PREFIX;
 	$prefix = $__MAP_PREFIX;
 
@@ -121,6 +121,12 @@ function getMap($map_id){
 		}
 		
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+		if($getAll){
+			$rs['table'] = getTableList($rs['map_id']);
+		}
+
 		
 		return $rs;
 	}
@@ -129,7 +135,7 @@ function getMap($map_id){
 	}
 }
 
-function getMapList($place_id){
+function getMapList($place_id, $getAll = false){
 	global $__MAP_PREFIX;
 	$prefix = $__MAP_PREFIX;
 
@@ -148,10 +154,21 @@ function getMapList($place_id){
 		$stmt = $DB_PDO->prepare("SELECT map_id, place_id, width, height, name, info, bg_image FROM map WHERE place_id = :place_id");
 		$stmt->bindParam(':place_id', $place_id, PDO::PARAM_INT);
 		$stmt->execute();
+
+		$n = $stmt->rowCount();
+		$map_list = $stmt->fetchAll(PDO::FETCH_CLASS);
+
+
+		if($getAll){
+			foreach ($map_list as &$map) {
+				$map->table = getTableList($map->map_id);
+			}
+		}
+
 		
 		$rs = [
-			"quantity" => $stmt->rowCount(),
-			"map_list" => $stmt->fetchAll(PDO::FETCH_CLASS)
+			"quantity" => $n,
+			"map_list" => $map_list
 		];
 
 		return $rs;
@@ -225,16 +242,16 @@ function prepareMapData($map_raw, $isEdit = false){
 	$map = prepareJSON($prefix, $map_raw, $__MAP_DEFAULT);
 
 
-	if($isEdit && (!isset($map['map_id']) || is_nan($map['map_id']) || $map['map_id'] <= 0)){
+	if($isEdit && (!isset($map['map_id']) || notPositiveInt($map['map_id']))){
 		$error[] = "Map ID";
 	}
-	if(!$isEdit && (!isset($map['place_id']) || is_nan($map['place_id']) || $map['place_id'] <= 0)){
+	if(!$isEdit && (!isset($map['place_id']) || notPositiveInt($map['place_id']))){
 		$error[] = "Place ID";
 	}
-	if(!isset($map['width']) || is_nan($map['width']) || $map['width'] <= 0){
+	if(!isset($map['width']) || notPositiveInt($map['width'])){
 		$error[] = "Width";
 	}
-	if(!isset($map['height']) || is_nan($map['height']) || $map['height'] <= 0){
+	if(!isset($map['height']) || notPositiveInt($map['height'])){
 		$error[] = "Height";
 	}
 
@@ -243,10 +260,10 @@ function prepareMapData($map_raw, $isEdit = false){
 	}
 
 
-	//if(!isset($map['width']) || is_nan($map['width']) || $map['width'] < 0){
+	//if(!isset($map['width']) || notPositiveInt($map['width'])){
 	//	$map['width'] = $__MAP_DEFAULT['width'];
 	//}
-	//if(!isset($map['height']) || is_nan($map['height']) || $map['height'] < 0){
+	//if(!isset($map['height']) || notPositiveInt($map['height'])){
 	//	$map['height'] = $__MAP_DEFAULT['height'];
 	//}
 	$map['name'] = trim($map['name']);
