@@ -5,8 +5,10 @@ Default Response JSON
 	"data" : {}
 }
 
-All data will be received & returned in JSON named "data", except register, login, & GET input.
-Data: Method is required in GET form; method=[add/edit/remove]
+All data will be received & returned as JSON named "data" inside Response JSON, except the input in register, login, & GET method.
+
+Data: Method is required in GET form; method=[add/edit/get/getall/remove/...]
+ie. member.php?method=register, map.php?method=get&place_id=1, etc.
 
 * Required
 ##### Member #####
@@ -19,16 +21,18 @@ member.php?method=verifySession [POST]
 * "session_id" (string)
 
 
-Response (Succeeded)
+[Login Data] Response (Succeeded)
 "data" : {
 	"verified" : true (bool)
 	"session_id" (string)
-	"info" (JSON from getProfile.php)
+	"info" : {
+		[Profile Data]
+	}
 }
 
 Response (Failed)
 "data" : {
-	"verified" => false (bool)
+	"verified" : false (bool)
 }
 
 ----------
@@ -45,7 +49,7 @@ Response
 profile.php?method=get [GET]
 - "member_id" (int: default - current user)
 
-Response
+[Profile Data] Response
 "data" : {
 	"verified" (int) [0: Not verified, 1: Verified member, 9: Admin]
 	"firstname" (string)
@@ -59,7 +63,7 @@ Response
 ----------
 
 event.php?method=add [POST]
-{
+"data" : {
 *	"name" (string)
 *	"place_id" (int)
 *	"date" (int timestamp in second)
@@ -75,7 +79,7 @@ Response
 ----------
 
 event.php?method=edit [POST]
-{
+"data" : {
 *	"event_id" (int)
 *	"name" (string)
 *	"place_id" (int)
@@ -109,10 +113,10 @@ event.php?method=get [GET]
 	"quantity" (int)
 	"event_list": {
 		{
-			Event Data JSON
+			[Event Data]
 		}
 		{
-			Event Data JSON
+			[Event Data]
 		}
 	}
 }
@@ -130,7 +134,7 @@ Response
 ----------
 
 place.php?method=add [POST]
-{
+"data" : {
 *	"name" (string: unique)
 *	"latitude" (string float)
 *	"longitude" (string float)
@@ -146,7 +150,7 @@ Response
 ----------
 
 place.php?method=edit [POST]
-{
+"data" : {
 *	"place_id" (int)
 *	"name" (string: unique)
 *	"latitude" (string float)
@@ -182,9 +186,9 @@ place.php?method=getall [GET]
 
 [Place All Data] Response
 "data" : {
-	Place data JSON
-	map : {
-		Map List & Table List data JSON
+	[Place Data]
+	"map" : {
+		[Map & Table List Data]
 	}
 }
 
@@ -208,7 +212,7 @@ Response
 ----------
 
 map.php?method=add [POST]
-{
+"data" : {
 *	"place_id" (int)
 *	"width" (int)
 *	"height" (int)
@@ -224,7 +228,7 @@ Response
 ----------
 
 map.php?method=edit [POST]
-{
+"data" : {
 *	"map_id" (int)
 *	"width" (int)
 *	"height" (int)
@@ -257,10 +261,10 @@ map.php?method=get [GET]
 	"quantity" (int)
 	"map_list": {
 		{
-			Map Data JSON
+			[Map Data]
 		}
 		{
-			Map Data JSON
+			[Map Data]
 		}
 	}
 }
@@ -272,9 +276,9 @@ map.php?method=getall [GET]
 
 [Map & Table Data] Response (map_id)
 "data" : {
-	Map data JSON
-	table : {
-		Table List data JSON
+	[Map Data]
+	"table" : {
+		[Table List Data]
 	}
 }
 
@@ -283,10 +287,10 @@ map.php?method=getall [GET]
 	"quantity" (int)
 	"map_list": {
 		{
-			Map & Table Data JSON
+			[Map & Table Data]
 		}
 		{
-			Map & Table Data JSON
+			[Map & Table Data]
 		}
 	}
 }
@@ -318,7 +322,7 @@ Response (place_id)
 ----------
 
 table.php?method=add [POST]
-{
+"data" : {
 *	"map_id" (int)
 *	"code" (string: unique)
 	"x" (int: default = 0)
@@ -334,7 +338,7 @@ Response
 ----------
 
 table.php?method=edit [POST]
-{
+"data" : {
 *	"table_id" (int)
 *	"code" (string: unique)
 	"x" (int: default = 0)
@@ -368,10 +372,10 @@ table.php?method=get [GET]
 	"quantity" (int)
 	"table_list": {
 		{
-			Table Data JSON
+			[Table Data]
 		}
 		{
-			Table Data JSON
+			[Table Data]
 		}
 	}
 }
