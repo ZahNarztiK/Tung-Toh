@@ -12,14 +12,14 @@ if(!isset($_GET['method'])){
 
 switch($_GET['method']){
 	case "add":
-		access_check($__EVENT_PREFIX, $__ACCESS_ADMIN, true);
+		access_check($__EVENT_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
 		$rs = addEvent($_POST['data']);
 
 		$success_msg = "Add hai la!";
 		break;
 	case "edit":
-		access_check($__EVENT_PREFIX, $__ACCESS_ADMIN, true);
+		access_check($__EVENT_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
 		$rs = editEvent($_POST['data']);
 		
@@ -47,7 +47,7 @@ switch($_GET['method']){
 		$success_msg = "Ow pai!";
 		break;
 	case "remove":
-		access_check($__EVENT_PREFIX, $__ACCESS_ADMIN);
+		access_check($__EVENT_PREFIX, $__ACCESS_CONSTANT['ADMIN']);
 
 		if(isset($_GET['event_id']) && isPositiveInt($_GET['event_id'])){
 			$rs = removeEvent($_GET['event_id']);

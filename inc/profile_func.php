@@ -6,6 +6,7 @@ if(!isset($_IN_SITE)){
 
 require_once("../../inc/db_connect.php");
 require_once("../../inc/init_response_func.php");
+require_once("../../inc/access_func.php");
 
 $__PROFILE_PREFIX = "IU";
 
@@ -18,6 +19,9 @@ function getProfile($member_id){
 	try{
 		global $DB_PDO;
 
+
+		checkProfileAccess($member_id);
+		
 
 		$stmt = $DB_PDO->prepare("SELECT verified, firstname, lastname, level, points, profile_image, email FROM member WHERE member_id = :member_id LIMIT 1");
 		$stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
@@ -33,6 +37,14 @@ function getProfile($member_id){
 	}
 	catch(PDOException $e){
 		reject($prefix, "10", $e->getMessage());
+	}
+}
+
+function checkProfileAccess($member_id){
+	global $__PROFILE_PREFIX, $__ACCESS_CONSTANT;
+
+	if($_SESSION['verified'] < $__ACCESS_CONSTANT['ADMIN']  && $_SESSION['member_id'] != $member_id){
+		reject($__PROFILE_PREFIX, "90", "Not yours. olo");
 	}
 }
 

@@ -12,14 +12,14 @@ if(!isset($_GET['method'])){
 
 switch($_GET['method']){
 	case "add":
-		access_check($__MAP_PREFIX, $__ACCESS_ADMIN, true);
+		access_check($__MAP_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
 		$rs = addMap($_POST['data']);
 
 		$success_msg = "Add hai la!";
 		break;
 	case "edit":
-		access_check($__MAP_PREFIX, $__ACCESS_ADMIN, true);
+		access_check($__MAP_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
 		$rs = editMap($_POST['data']);
 		
@@ -47,7 +47,7 @@ switch($_GET['method']){
 		$success_msg = "Ow pai!";
 		break;
 	case "remove":
-		access_check($__MAP_PREFIX, $__ACCESS_ADMIN);
+		access_check($__MAP_PREFIX, $__ACCESS_CONSTANT['ADMIN']);
 
 		if(isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])){
 			$rs = removeMap($_GET['map_id']);

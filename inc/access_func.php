@@ -9,9 +9,11 @@ if(!isset($_SESSION)){
 
 require_once("../../inc/init_response_func.php");
 
-$__ACCESS_LOGGEDIN = 0;
-$__ACCESS_VERIFIED = 1;
-$__ACCESS_ADMIN = 9;
+$__ACCESS_CONSTANT = [
+	"LOGGEDIN" => 0,
+	"VERIFIED" => 1,
+	"ADMIN" => 9
+];
 
 function access_check($prefix, $previlege = 0, $DataRequired = false){
 	if(!isset($_SESSION['verified'])){

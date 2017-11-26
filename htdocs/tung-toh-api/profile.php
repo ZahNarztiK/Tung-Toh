@@ -13,14 +13,14 @@ if(!isset($_GET['method'])){
 
 switch($_GET['method']){
 	//case "add":
-	//	access_check($__PROFILE_PREFIX, $__ACCESS_ADMIN, true);
+	//	access_check($__PROFILE_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
 	//	$rs = addPlace($_POST['data']);
 
 	//	$success_msg = "Add hai la!";
 	//	break;
 	//case "edit":
-	//	access_check($__PROFILE_PREFIX, $__ACCESS_ADMIN, true);
+	//	access_check($__PROFILE_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
 	//	$rs = editProfile($_POST['data']);
 		
@@ -39,7 +39,7 @@ switch($_GET['method']){
 		$success_msg = "Ow pai!";
 		break;
 	//case "remove":
-	//	access_check($__PROFILE_PREFIX, $__ACCESS_ADMIN);
+	//	access_check($__PROFILE_PREFIX, $__ACCESS_CONSTANT['ADMIN']);
 
 	//	if(!isset($_GET['member_id']) || is_nan($_GET['member_id']) || $_GET['member_id'] <= 0){
 	//		reject($__PROFILE_PREFIX, "04", "Member ID????");
