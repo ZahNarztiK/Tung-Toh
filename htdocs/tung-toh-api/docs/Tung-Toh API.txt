@@ -5,9 +5,9 @@ Default Response JSON
 	"data" : {}
 }
 
-All data will be received & returned as JSON named "data" inside Response JSON, except the input in register, login, & GET method.
+All data will be received & returned as JSON named "data" inside Response JSON, except the input in [register, login, verifySession, & GET method].
 
-Data: Method is required in GET form; method=[add/edit/get/getall/remove/...]
+Method is required in GET form; method=[add/edit/get/getall/remove/...]
 ie. member.php?method=register, map.php?method=get&place_id=1, etc.
 
 * Required
