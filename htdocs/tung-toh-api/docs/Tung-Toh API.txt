@@ -344,6 +344,7 @@ table.php?method=add [POST]
 *	"code" (string: unique)
 	"x" (int: default = 0)
 	"y" (int: default = 0)
+	"rotation" (int: angle in 360 degree, default = 0)
 	"table_type_id" (int: default = 0)
 }
 
@@ -360,6 +361,7 @@ table.php?method=edit [POST]
 *	"code" (string: unique)
 	"x" (int: default = 0)
 	"y" (int: default = 0)
+	"rotation" (int: angle in 360 degree, default = 0)
 	"table_type_id" (int: default = 0)
 }
 
@@ -381,6 +383,7 @@ table.php?method=get [GET]
 	"code" (string: unique)
 	"x" (int)
 	"y" (int)
+	"rotation" (int: angle in 360 degree)
 	"table_type_id" (int)
 }
 
