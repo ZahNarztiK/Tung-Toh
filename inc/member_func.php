@@ -9,6 +9,7 @@ if(!isset($_SESSION)){
 
 require_once("../../inc/db_connect.php");
 require_once("../../inc/init_response_func.php");
+require_once("../../inc/basic_func.php");
 require_once("../../inc/profile_func.php");
 
 require_once("../../inc/member_subfunc/register.php");
@@ -48,19 +49,6 @@ function run_RLS_set($func){
 
 function set_session($info){
 	$_SESSION = $info + $_SESSION;
-}
-
-function valid_email($email){
-	$pattern = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/";
-	return preg_match($pattern, $email);
-}
-
-function valid_password($password){
-	return $password != "";
-}
-
-function valid_session_id($session_id){
-	return $session_id != "";
 }
 
 ?>

@@ -28,4 +28,27 @@ function prepareJSON($prefix, $data, $default_data = []){
 	return $data + $default_data;
 }
 
+function valid_email($email){
+	$pattern = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/";
+	return preg_match($pattern, $email);
+}
+
+function valid_imageURL($url){
+	$pattern = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/";
+	return preg_match($pattern, $url);
+}
+
+function valid_password($password){
+	return $password != "";
+}
+
+function valid_session_id($session_id){
+	return $session_id != "";
+}
+
+function valid_tel($tel){
+	$pattern = "/^\d{9,10})$/";
+	return preg_match($pattern, $email);
+}
+
 ?>

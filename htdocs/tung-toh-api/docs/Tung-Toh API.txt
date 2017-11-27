@@ -46,18 +46,35 @@ Response
 
 #####Data##### [Log in required; Admin required for adding data]
 
+profile.php?method=edit [POST]
+"data" : {
+*	"member_id" (int)
+	"firstname" (string)
+	"lastname" (string)
+	"tel" (string: tel number; 9-10 int)
+	"profile_image" (string: url)
+}
+
+Response
+"data" : {
+	"member_id" (int)
+}
+
+----------
+
 profile.php?method=get [GET]
 - "member_id" (int: default - current user)
 
 [Profile Data] Response
 "data" : {
+	"email" (string)
 	"verified" (int) [0: Not verified, 1: Verified member, 9: Admin]
 	"firstname" (string)
 	"lastname" (string)
+	"tel" (string: tel number; 9-10 int)
 	"level" (int)
 	"points" (int)
 	"profile_image" (string: url)
-	"email" (string)
 }
 
 ----------

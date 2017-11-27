@@ -12,6 +12,13 @@ if(!isset($_GET['method'])){
 }
 
 switch($_GET['method']){
+	case "edit":
+		access_check($__PROFILE_PREFIX, $__ACCESS_CONSTANT['LOGGEDIN'], true);
+
+		$rs = editProfile($_POST['data']);
+		
+		$success_msg = "Edit laew woi~";
+		break;
 	case "get":
 		access_check($__PROFILE_PREFIX);
 
