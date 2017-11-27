@@ -13,8 +13,10 @@ $__TABLE_DEFAULT = [
 	"code" => "",
 	"x" => 0,
 	"y" => 0,
+	"rotation" => 0,
 	"table_type_id" => 0
 ];
+$__TABLE_INFO_QUERY = "table_id, map_id, place_id, code, X(location) as x, Y(location) as y, rotation, table_type_id";
 
 
 
@@ -48,12 +50,13 @@ function addTable($table_raw){
 		}
 
 
-		$stmt = $DB_PDO->prepare("INSERT INTO `table` (map_id, place_id, code, location, table_type_id) VALUES (:map_id, :place_id, :code, POINT(:x, :y), :table_type_id)");
+		$stmt = $DB_PDO->prepare("INSERT INTO `table` (map_id, place_id, code, location, rotation, table_type_id) VALUES (:map_id, :place_id, :code, POINT(:x, :y), :rotation, :table_type_id)");
 		$stmt->bindParam(':map_id', $table['map_id'], PDO::PARAM_INT);
 		$stmt->bindParam(':place_id', $table['place_id'], PDO::PARAM_INT);
 		$stmt->bindParam(':code', $table['code']);
 		$stmt->bindParam(':x', $table['x'], PDO::PARAM_INT);
 		$stmt->bindParam(':y', $table['y'], PDO::PARAM_INT);
+		$stmt->bindParam(':rotation', $table['rotation'], PDO::PARAM_INT);
 		$stmt->bindParam(':table_type_id', $table['table_type_id'], PDO::PARAM_INT);
 		$stmt->execute();
 		
@@ -103,12 +106,13 @@ function editTable($table_raw){
 		}
 
 
-		$stmt = $DB_PDO->prepare("UPDATE `table` SET code = :code, location = POINT(:x, :y), table_type_id = :table_type_id WHERE table_id = :table_id");
+		$stmt = $DB_PDO->prepare("UPDATE `table` SET code = :code, location = POINT(:x, :y), rotation = :rotation table_type_id = :table_type_id WHERE table_id = :table_id");
 		$stmt->bindParam(':map_id', $table['map_id'], PDO::PARAM_INT);
 		$stmt->bindParam(':place_id', $table['place_id'], PDO::PARAM_INT);
 		$stmt->bindParam(':code', $table['code']);
 		$stmt->bindParam(':x', $table['x'], PDO::PARAM_INT);
 		$stmt->bindParam(':y', $table['y'], PDO::PARAM_INT);
+		$stmt->bindParam(':rotation', $table['rotation'], PDO::PARAM_INT);
 		$stmt->bindParam(':table_type_id', $table['table_type_id'], PDO::PARAM_INT);
 		$stmt->bindParam(':table_id', $table['table_id'], PDO::PARAM_INT);
 		$stmt->execute();
@@ -126,14 +130,14 @@ function editTable($table_raw){
 }
 
 function getTable($table_id){
-	global $__TABLE_PREFIX;
+	global $__TABLE_PREFIX, $__TABLE_INFO_QUERY;
 	$prefix = $__TABLE_PREFIX;
 
 	try{
 		global $DB_PDO;
 
 
-		$stmt = $DB_PDO->prepare("SELECT table_id, map_id, place_id, code, X(location) as x, Y(location) as y, table_type_id FROM `table` WHERE table_id = :table_id LIMIT 1");
+		$stmt = $DB_PDO->prepare("SELECT $__TABLE_INFO_QUERY FROM `table` WHERE table_id = :table_id LIMIT 1");
 		$stmt->bindParam(':table_id', $table_id, PDO::PARAM_INT);
 		$stmt->execute();
 		
@@ -151,7 +155,7 @@ function getTable($table_id){
 }
 
 function getTableList($map_id){
-	global $__TABLE_PREFIX;
+	global $__TABLE_PREFIX, $__TABLE_INFO_QUERY;
 	$prefix = $__TABLE_PREFIX;
 
 	try{
@@ -167,7 +171,7 @@ function getTableList($map_id){
 		}
 
 
-		$stmt = $DB_PDO->prepare("SELECT table_id, map_id, place_id, code, X(location) as x, Y(location) as y, table_type_id FROM `table` WHERE map_id = :map_id");
+		$stmt = $DB_PDO->prepare("SELECT $__TABLE_INFO_QUERY FROM `table` WHERE map_id = :map_id");
 		$stmt->bindParam(':map_id', $map_id, PDO::PARAM_INT);
 		$stmt->execute();
 				
@@ -267,6 +271,9 @@ function prepareTableData($table_raw, $isEdit = false){
 	}
 	if(is_nan($table['y'])){
 		$table['y'] = $__TABLE_DEFAULT['y'];
+	}
+	if(is_nan($table['rotation'])){
+		$table['rotation'] = $__TABLE_DEFAULT['rotation'];
 	}
 	if(notPositiveInt($table['table_type_id'])){
 		$table['table_type_id'] = $__TABLE_DEFAULT['table_type_id'];

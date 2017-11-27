@@ -18,6 +18,7 @@ $__PLACE_DEFAULT = [
 	"logo_image" => "",
 	"info" => ""
 ];
+$__PLACE_INFO_QUERY = "place_id, name, X(location) as latitude, Y(location) as longitude, logo_image, info";
 
 
 
@@ -115,14 +116,14 @@ function editPlace($place_raw){
 }
 
 function getPlace($place_id, $getAll = false){
-	global $__PLACE_PREFIX;
+	global $__PLACE_PREFIX, $__PLACE_INFO_QUERY;
 	$prefix = $__PLACE_PREFIX;
 
 	try{
 		global $DB_PDO;
 
 
-		$stmt = $DB_PDO->prepare("SELECT place_id, X(location) as latitude, Y(location) as longitude, logo_image, info FROM place WHERE place_id = :place_id LIMIT 1");
+		$stmt = $DB_PDO->prepare("SELECT $__PLACE_INFO_QUERY FROM place WHERE place_id = :place_id LIMIT 1");
 		$stmt->bindParam(':place_id', $place_id, PDO::PARAM_INT);
 		$stmt->execute();
 		

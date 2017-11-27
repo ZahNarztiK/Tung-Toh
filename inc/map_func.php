@@ -17,6 +17,7 @@ $__MAP_DEFAULT = [
 	"info" => "",
 	"bg_image" => ""
 ];
+$__MAP_INFO_QUERY = "map_id, place_id, width, height, name, info, bg_image";
 
 
 
@@ -105,14 +106,14 @@ function editMap($map_raw){
 }
 
 function getMap($map_id, $getAll = false){
-	global $__MAP_PREFIX;
+	global $__MAP_PREFIX, $__MAP_INFO_QUERY;
 	$prefix = $__MAP_PREFIX;
 
 	try{
 		global $DB_PDO;
 
 
-		$stmt = $DB_PDO->prepare("SELECT map_id, place_id, width, height, name, info, bg_image FROM map WHERE map_id = :map_id LIMIT 1");
+		$stmt = $DB_PDO->prepare("SELECT $__MAP_INFO_QUERY FROM map WHERE map_id = :map_id LIMIT 1");
 		$stmt->bindParam(':map_id', $map_id, PDO::PARAM_INT);
 		$stmt->execute();
 		
@@ -136,7 +137,7 @@ function getMap($map_id, $getAll = false){
 }
 
 function getMapList($place_id, $getAll = false){
-	global $__MAP_PREFIX;
+	global $__MAP_PREFIX, $__MAP_INFO_QUERY;
 	$prefix = $__MAP_PREFIX;
 
 	try{
@@ -151,7 +152,7 @@ function getMapList($place_id, $getAll = false){
 		}
 
 
-		$stmt = $DB_PDO->prepare("SELECT map_id, place_id, width, height, name, info, bg_image FROM map WHERE place_id = :place_id");
+		$stmt = $DB_PDO->prepare("SELECT $__MAP_INFO_QUERY FROM map WHERE place_id = :place_id");
 		$stmt->bindParam(':place_id', $place_id, PDO::PARAM_INT);
 		$stmt->execute();
 

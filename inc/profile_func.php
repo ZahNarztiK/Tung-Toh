@@ -15,6 +15,7 @@ $__PROFILE_DEFAULT = [
 	"tel" => "",
 	"profile_image" => ""
 ];
+$__PROFILE_INFO_QUERY = "email, verified, firstname, lastname, tel, level, points, profile_image";
 
 
 
@@ -61,7 +62,7 @@ function editProfile($profile_raw){
 }
 
 function getProfile($member_id){
-	global $__PROFILE_PREFIX;
+	global $__PROFILE_PREFIX, $__PROFILE_INFO_QUERY;
 	$prefix = $__PROFILE_PREFIX;
 
 	try{
@@ -71,7 +72,7 @@ function getProfile($member_id){
 		checkProfileAccess($member_id);
 		
 
-		$stmt = $DB_PDO->prepare("SELECT email, verified, firstname, lastname, tel, level, points, profile_image FROM member WHERE member_id = :member_id LIMIT 1");
+		$stmt = $DB_PDO->prepare("SELECT $__PROFILE_INFO_QUERY FROM member WHERE member_id = :member_id LIMIT 1");
 		$stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
 		$stmt->execute();
 		

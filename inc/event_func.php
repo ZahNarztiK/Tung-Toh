@@ -17,6 +17,7 @@ $__EVENT_DEFAULT = [
 	"info" => "",
 	"image" => ""
 ];
+$__EVENT_INFO_QUERY = "event_id, name, place_id, date, info, image";
 
 
 
@@ -104,14 +105,14 @@ function editEvent($event_raw){
 }
 
 function getEvent($event_id, $getAll = false){
-	global $__EVENT_PREFIX;
+	global $__EVENT_PREFIX, $__EVENT_INFO_QUERY;
 	$prefix = $__EVENT_PREFIX;
 
 	try{
 		global $DB_PDO;
 
 
-		$stmt = $DB_PDO->prepare("SELECT event_id, name, place_id, date, info, image FROM event WHERE event_id = :event_id LIMIT 1");
+		$stmt = $DB_PDO->prepare("SELECT $__EVENT_INFO_QUERY FROM event WHERE event_id = :event_id LIMIT 1");
 		$stmt->bindParam(':event_id', $event_id, PDO::PARAM_INT);
 		$stmt->execute();
 		
@@ -136,7 +137,7 @@ function getEvent($event_id, $getAll = false){
 }
 
 function getEventList($place_id, $getAll = false){
-	global $__EVENT_PREFIX;
+	global $__EVENT_PREFIX, $__EVENT_INFO_QUERY;
 	$prefix = $__EVENT_PREFIX;
 
 	try{
@@ -152,7 +153,7 @@ function getEventList($place_id, $getAll = false){
 		}
 
 
-		$stmt = $DB_PDO->prepare("SELECT event_id, name, place_id, date, info, image FROM event WHERE place_id = :place_id");
+		$stmt = $DB_PDO->prepare("SELECT $__EVENT_INFO_QUERY FROM event WHERE place_id = :place_id");
 		$stmt->bindParam(':place_id', $place_id, PDO::PARAM_INT);
 		$stmt->execute();
 		
