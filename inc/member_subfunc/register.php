@@ -3,16 +3,8 @@
 if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
-if(!isset($_SESSION)){
-	session_start();
-}
 
 $__REGISTER_PREFIX = "MR";
-
-$_FUNC = "add_member";
-require_once("../../inc/init_login_func.php");
-
-
 
 
 
@@ -22,6 +14,9 @@ function add_member(){
 
 	try{
 		global $DB_PDO;
+
+		
+		register_infoCheck();
 
 		$email = $_POST['email'];
 		$password = md5($_POST['password']);
@@ -56,10 +51,7 @@ function add_member(){
 					"verified" => 0
 				];
 
-		set_session($rs);
-		set_login_response();
-		success($prefix, "Samuk dai la!");
-
+		
 		return $rs;
 	}
 	catch(PDOException $e){
@@ -67,7 +59,7 @@ function add_member(){
 	}
 }
 
-function info_check(){
+function register_infoCheck(){
 	global $__REGISTER_PREFIX;
 	$prefix = $__REGISTER_PREFIX;
 

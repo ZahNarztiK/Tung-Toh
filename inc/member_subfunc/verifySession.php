@@ -3,16 +3,8 @@
 if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
-if(!isset($_SESSION)){
-	session_start();
-}
 
 $__VERIFYSESSION_PREFIX = "MS";
-
-$_FUNC = "verifySession";
-require_once("../../inc/init_login_func.php");
-
-
 
 
 
@@ -23,9 +15,12 @@ function verifySession(){
 	try{
 		global $DB_PDO;
 		
+
+		verifySession_infoCheck();
+
 		$session_id = $_POST['session_id'];
 		
-		
+
 		$stmt = $DB_PDO->prepare("SELECT member_id, email, verified FROM member WHERE (session_id = :session_id) LIMIT 1");
 		$stmt->bindParam(':session_id', $session_id);
 		$stmt->execute();
@@ -37,10 +32,6 @@ function verifySession(){
 		$rs['session_id'] = $session_id;
 		
 		
-		set_session($rs);
-		set_login_response();
-		success($prefix, "Login dai la!");
-		
 		return $rs;
 	}
 	catch(PDOException $e){
@@ -48,7 +39,7 @@ function verifySession(){
 	}
 }
 
-function info_check(){
+function verifySession_infoCheck(){
 	global $__VERIFYSESSION_PREFIX;
 	$prefix = $__VERIFYSESSION_PREFIX;
 

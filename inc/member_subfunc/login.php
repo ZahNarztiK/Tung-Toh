@@ -3,16 +3,8 @@
 if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
-if(!isset($_SESSION)){
-	session_start();
-}
 
 $__LOGIN_PREFIX = "ML";
-
-$_FUNC = "login";
-require_once("../../inc/init_login_func.php");
-
-
 
 
 
@@ -22,6 +14,9 @@ function login(){
 
 	try{
 		global $DB_PDO;
+
+		
+		login_infoCheck();
 
 		$email = $_POST['email'];
 		$password = md5($_POST['password']);
@@ -47,10 +42,6 @@ function login(){
 		}
 		
 		
-		set_session($rs);
-		set_login_response();
-		success($prefix, "Login dai la!");
-
 		return $rs;
 	}
 	catch(PDOException $e){
@@ -58,7 +49,7 @@ function login(){
 	}
 }
 
-function info_check(){
+function login_infoCheck(){
 	global $__LOGIN_PREFIX;
 	$prefix = $__LOGIN_PREFIX;
 
