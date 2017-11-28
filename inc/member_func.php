@@ -16,11 +16,19 @@ require_once("../../inc/member_subfunc/register.php");
 require_once("../../inc/member_subfunc/verifySession.php");
 require_once("../../inc/member_subfunc/login.php");
 require_once("../../inc/member_subfunc/logout.php");
+require_once("../../inc/member_subfunc/forgetPassword.php");
+require_once("../../inc/member_subfunc/resetPassword.php");
 
 
 function init_login_response(){
 	set_response([
 		"verified" => false
+	]);
+}
+
+function init_send_response($status = false){
+	set_response([
+		"status" => $status
 	]);
 }
 

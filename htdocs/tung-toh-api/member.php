@@ -40,6 +40,18 @@ switch($_GET['method']){
 		$__MEMBER_PREFIX = $__LOGIN_PREFIX;
 		$success_msg = "Session cleared!";
 		break;
+	case "forget":
+		$rs = forgetPassword();
+
+		$__MEMBER_PREFIX = $__FORGET_PREFIX;
+		$success_msg = "Arn mail duay";
+		break;
+	case "resetpwd":
+		$rs = resetPassword();
+
+		$__MEMBER_PREFIX = $__RESETPWD_PREFIX;
+		$success_msg = "Ahhhh yeahh~~~~";
+		break;
 	default:
 		reject($__MEMBER_PREFIX, "04", "Method KUY RAI SUS!!?!??!?");
 		break;

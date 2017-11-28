@@ -44,6 +44,28 @@ Response
 	"logged_out" (bool: logged in before)
 }
 
+----------
+
+member.php?method=forget [POST]
+*	"email" (string)
+
+Response
+"data" : {
+	"status" (bool: is email sent)
+}
+
+----------
+
+member.php?method=resetpwd [POST]
+*	"email" (string)
+*	"code" (string)
+	"password" (string) [declare if password change needed]
+
+Response
+"data" : {
+	"status" (int) [is pasword set available; 0: not available, 1: available, 2: password changed]
+}
+
 #####Data##### [Log in required; Admin required for adding data]
 
 profile.php?method=edit [POST]
