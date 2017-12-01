@@ -5,6 +5,8 @@ if(!isset($_IN_SITE)){
 }
 
 require_once("../../inc/PHPMailer/init_PHPMailer.php");
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 $__FORGET_PREFIX = "MF";
 
@@ -88,7 +90,7 @@ function forgetPassword(){
 	$emailMSG[] = "v";
 	$emailMSG[] = "v";
 	$emailMSG[] = "v";
-	$emailMSG[] = "<a href=\"$api\">RePass</a>";
+	$emailMSG[] = "<a href=\"$api\"><img src=\"cid:lorsus\" alt=\"yeah\"></a>";
 	$msg = implode("</br>", $emailMSG);
 	
 
@@ -120,6 +122,8 @@ function forgetPassword(){
 		$mail->Subject = $__FORGET_EMAIL['topic'];
 		$mail->isHTML(true);
 		$mail->Body = $msg;
+
+		$mail->addEmbeddedImage("../../inc/email/eiei.jpg", "lorsus");
 		
 		$status = $mail->send();
 
