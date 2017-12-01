@@ -4,12 +4,32 @@ if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
 
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require "../../inc/PHPMailer/Exception.php";
+require "../../inc/PHPMailer/PHPMailer.php";
+require "../../inc/PHPMailer/SMTP.php";
+
 $__FORGET_PREFIX = "MF";
+
+$__FORGET_EMAIL = [
+	"server" => "mail.nc-production.net",
+	"user" => "tung-toh@nc-production.net",
+	"password" => "6284629",
+	"sender_name" => "Tung-Toh Team",
+	"sender_email" => "tung-toh-noreply@nc-production.net",
+	"topic" => "[Tung-Toh] Reset Password",
+	"apiprefix" => "http://nc-production.net/tung-toh/kuyaraisukyang.php?"
+];
+
+$__FORGET_SMS = [];
 
 
 
 function forgetPassword(){
-	global $__FORGET_PREFIX;
+	global $__FORGET_PREFIX, $__FORGET_EMAIL;
 	$prefix = $__FORGET_PREFIX;
 
 	init_send_response();
@@ -23,42 +43,105 @@ function forgetPassword(){
 		$email = $_POST['email'];
 		
 
-		$stmt = $DB_PDO->prepare("SELECT member_id FROM member WHERE email = :email LIMIT 1");
+		$stmt = $DB_PDO->prepare("SELECT member_id, firstname, lastname FROM member WHERE email = :email LIMIT 1");
 		$stmt->bindParam(':email', $email);
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
 			reject($prefix, "14", "MAI MEE EMAIL NEE WOIII, kuy eiei!!!");
 		}
-		$member_id = $stmt->fetchColumn();
+		$info = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
-		$code = md5($email.time()).time();
 		$code_expired = date("Y-m-d H:i:s", strtotime("+1 week"));
+		$hash = md5($email);
+		$hash .= md5($hash.time());
+		$hash .= md5($code_expired.$hash);
+		$code = base_convert($hash, 16, 36);
 		
 
 		$stmt = $DB_PDO->prepare("UPDATE member SET forget_code = :forget_code, forget_code_expired = :forget_code_expired WHERE member_id = :member_id");
 		$stmt->bindParam(':forget_code', $code);
 		$stmt->bindParam(':forget_code_expired', $code_expired);
-		$stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
+		$stmt->bindParam(':member_id', $info['member_id'], PDO::PARAM_INT);
 		$stmt->execute();
-
-
-		//send email + verification code
-
-
-		$rs = [
-			"status" => true,
-			"temp_info" => [		//will be removed
-				"email" => $email,
-				"code" => $code
-			]
-		];
-		
-		return $rs;
 	}
 	catch(PDOException $e){
 		reject($prefix, "10", $e->getMessage());
+	}
+
+
+	if($info['firstname'] != ""){
+		$name = $info['firstname'];
+		if($info['lastname'] != ""){
+			$name .= $info['lastname'];
+		}
+	}
+	else{
+		$name = split("@", $email)[0];
+	}
+
+	$apiparam = [
+		"email=$email",
+		"code=$code"
+	];
+	$api = $__FORGET_EMAIL['apiprefix'].implode("&", $apiparam);
+
+	$emailMSG = [];
+	$emailMSG[] = "D $name,";
+	$emailMSG[] = "";
+	$emailMSG[] = "God di sus";
+	$emailMSG[] = "v";
+	$emailMSG[] = "v";
+	$emailMSG[] = "v";
+	$emailMSG[] = "<a href=\"$api\">RePass</a>";
+	$msg = implode("</br>", $emailMSG);
+	
+
+	$mail = new PHPMailer(true);
+	try {
+		$mail->isSMTP();
+		$mail->SMTPDebug = 0;
+
+		
+		$mail->Host = $__FORGET_EMAIL['server'];
+		$mail->Port = 25;
+
+		$mail->SMTPAuth = true;
+		$mail->Username = $__FORGET_EMAIL['user'];
+		$mail->Password = $__FORGET_EMAIL['password'];;
+		$mail->SMTPSecure = "tls";
+		$mail->SMTPOptions = [
+			'ssl' => [
+				'verify_peer' => false,
+				'verify_peer_name' => false,
+				'allow_self_signed' => true
+			]
+		];
+		
+		$mail->setFrom($__FORGET_EMAIL['sender_email'], $__FORGET_EMAIL['sender_name']);
+		$mail->addReplyTo($__FORGET_EMAIL['sender_email'], $__FORGET_EMAIL['sender_name']);
+		$mail->addAddress($email, $name);
+
+		$mail->Subject = $__FORGET_EMAIL['topic'];
+		$mail->isHTML(true);
+		$mail->Body = $msg;
+		
+		$status = $mail->send();
+
+		if(!$status){
+			reject($prefix, "19", $mail->ErrorInfo);
+		}
+
+		$rs = [
+			"status" => true
+		];
+
+		return $rs;
+	}catch(Exception $e){
+		reject($prefix, "19", $e->getMessage());
+	}catch(\Exception $e){
+		reject($prefix, "19", $e->getMessage());
 	}
 }
 

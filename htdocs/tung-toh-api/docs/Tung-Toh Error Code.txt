@@ -25,6 +25,7 @@ Member	[M]
 	Logout	[ML]
 	ForgetPwd [MF]
 		Email not found		[14]
+		Email send failed	[19]
 	ResetPwd [MP]
 		Info not found		[14]
 
