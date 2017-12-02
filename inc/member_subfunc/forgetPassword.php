@@ -16,7 +16,7 @@ $__FORGET_EMAIL = [
 		"server" => "mail.nc-production.net",
 		"port" => 25,
 		"user" => "tung-toh@nc-production.net",
-		"password" => "6284629"
+		"password" => "6284629Kuy"
 	],
 	"gmail" => [
 		"server" => "smtp.gmail.com",
