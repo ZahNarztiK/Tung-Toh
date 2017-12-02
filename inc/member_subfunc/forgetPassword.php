@@ -11,9 +11,19 @@ use PHPMailer\PHPMailer\Exception;
 $__FORGET_PREFIX = "MF";
 
 $__FORGET_EMAIL = [
-	"server" => "mail.nc-production.net",
-	"user" => "tung-toh@nc-production.net",
-	"password" => "6284629",
+	"mode" => "ncp",
+	"ncp" => [
+		"server" => "mail.nc-production.net",
+		"port" => 25,
+		"user" => "tung-toh@nc-production.net",
+		"password" => "6284629"
+	],
+	"gmail" => [
+		"server" => "smtp.gmail.com",
+		"port" => 587,
+		"user" => "tungtoh.app@gmail.com",
+		"password" => "6284629Kuy"
+	],
 	"sender_name" => "Tung-Toh Team",
 	"sender_email" => "tung-toh-noreply@nc-production.net",
 	"topic" => "[Tung-Toh] Reset Password",
@@ -100,12 +110,12 @@ function forgetPassword(){
 		$mail->SMTPDebug = 0;
 
 		
-		$mail->Host = $__FORGET_EMAIL['server'];
-		$mail->Port = 25;
+		$mail->Host = $__FORGET_EMAIL[$__FORGET_EMAIL['mode']]['server'];
+		$mail->Port = $__FORGET_EMAIL[$__FORGET_EMAIL['mode']]['port'];
 
 		$mail->SMTPAuth = true;
-		$mail->Username = $__FORGET_EMAIL['user'];
-		$mail->Password = $__FORGET_EMAIL['password'];;
+		$mail->Username = $__FORGET_EMAIL[$__FORGET_EMAIL['mode']]['user'];
+		$mail->Password = $__FORGET_EMAIL[$__FORGET_EMAIL['mode']]['password'];;
 		$mail->SMTPSecure = "tls";
 		$mail->SMTPOptions = [
 			'ssl' => [
