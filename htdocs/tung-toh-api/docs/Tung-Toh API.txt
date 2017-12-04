@@ -112,7 +112,7 @@ event.php?method=add [POST]
 
 Response
 "data" : {
-	"event_id" (int)
+	[Event All Data]
 }
 
 ----------
@@ -129,7 +129,26 @@ event.php?method=edit [POST]
 
 Response
 "data" : {
+	"table_id" (int)
 	"event_id" (int)
+}
+
+----------
+
+event.php?method=edittable [POST]
+"data" : {
+*	"event_id" (int)
+*	"table_id" (int)
+*	"code" (string: unique)
+	"x" (int: default = 0)
+	"y" (int: default = 0)
+	"rotation" (int: angle in 360 degree, default = 0)
+	"table_type_id" (int: default = 0)
+}
+
+Response
+"data" : {
+	"table_id" (int)
 }
 
 ----------
@@ -145,6 +164,7 @@ event.php?method=get [GET]
 	"date" (int timestamp in second)
 	"info" (string)
 	"image" (string: url)
+	"active" (bool) [True if published]
 }
 
 [Event List Data] Response (place_id)
@@ -162,13 +182,75 @@ event.php?method=get [GET]
 
 ----------
 
-event.php?method=remove [GET]
-*  "event_id" (int)
+event.php?method=getall [GET]
+*	"event_id" / "place_id" (int)
 
-Response
+[Event All Data] Response (event_id)
+"data" : {
+	[Event Data]
+	place : {
+		[Place Data]
+		map : {
+			[Map & Table Booking List Data] ([Map & Table List Data]+[Table Booking List Data])
+		}
+	}
+}
+
+[Event List All Data] Response (place_id) <disabled>
+"data" : {
+	[Event List Data]
+}
+
+----------
+
+event.php?method=gettable [GET]
+*	"table_id" / "map_id" (int)
+
+[Table Booking Data] Response (table_id)
+data : {
+	current_booking_id (int)
+	event_id (int)
+	[Table Data]
+	booking_id (int)
+	active (bool) [True if published]
+}
+
+[Table Booking List Data] Response (map_id)
+data : {
+	quantity (int)
+	table_list: {
+		{
+			[Table Booking Data]
+		}
+		{
+			[Table Booking Data]
+		}
+	}
+}
+
+----------
+
+event.php?method=remove [GET]
+*  "event_id" / "place_id" (int)
+
+Response (event_id)
 "data" : {
 	"event_id" (int)
+	"table_booking_deleted" : {
+		"event_id" (int)
+		"quantity" (int)
+	}
 }
+
+Response (place_id)
+"data" : {
+	"place_id" (int)
+	"table_booking_deleted" : {
+		"place_id" (int)
+		"quantity" (int)
+	}
+}
+
 
 ----------
 
@@ -245,6 +327,10 @@ Response
 			"place_id" (int)
 			"quantity" (int)
 		}
+	}
+	"event_deleted" : {
+		"place_id" (int)
+		"quantity" (int)
 	}
 }
 

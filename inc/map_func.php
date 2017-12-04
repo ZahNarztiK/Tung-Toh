@@ -105,9 +105,11 @@ function editMap($map_raw){
 	}
 }
 
-function getMap($map_id, $getAll = false){
+function getMap($map_id, $getAll = false, $event_id = null){
 	global $__MAP_PREFIX, $__MAP_INFO_QUERY;
 	$prefix = $__MAP_PREFIX;
+
+	$is_event_param = isPositiveInt($event_id);
 
 	try{
 		global $DB_PDO;
@@ -125,7 +127,12 @@ function getMap($map_id, $getAll = false){
 
 
 		if($getAll){
-			$rs['table'] = getTableList($rs['map_id']);
+			if($is_event_param){
+				$rs['table'] = getTableList($rs['map_id'], $event_id);
+			}
+			else{
+				$rs['table'] = getTableList($rs['map_id']);
+			}
 		}
 
 		
@@ -136,9 +143,11 @@ function getMap($map_id, $getAll = false){
 	}
 }
 
-function getMapList($place_id, $getAll = false){
+function getMapList($place_id, $getAll = false, $event_id = null){
 	global $__MAP_PREFIX, $__MAP_INFO_QUERY;
 	$prefix = $__MAP_PREFIX;
+
+	$is_event_param = isPositiveInt($event_id);
 
 	try{
 		global $DB_PDO;
@@ -161,8 +170,15 @@ function getMapList($place_id, $getAll = false){
 
 
 		if($getAll){
-			foreach ($map_list as &$map) {
-				$map->table = getTableList($map->map_id);
+			if($is_event_param){
+				foreach($map_list as &$map){
+					$map->table = getTableList($map->map_id, $event_id);
+				}
+			}
+			else{
+				foreach($map_list as &$map){
+					$map->table = getTableList($map->map_id);
+				}
 			}
 		}
 

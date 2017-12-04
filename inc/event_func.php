@@ -15,9 +15,10 @@ $__EVENT_PREFIX = "IE";
 $__EVENT_DEFAULT = [
 	"name" => "",
 	"info" => "",
-	"image" => ""
+	"image" => "",
+	"table_list" => []
 ];
-$__EVENT_INFO_QUERY = "event_id, name, place_id, date, info, image";
+$__EVENT_INFO_QUERY = "event_id, name, place_id, date, info, image, active";
 
 
 
@@ -53,9 +54,11 @@ function addEvent($event_raw){
 			reject($prefix, "19", "Event add failed.");
 		}
 
-		$rs = [
-			"event_id" => $event_id
-		];
+		setupTableToEvent($event_id, $event['place_id']);
+
+		
+		$rs = getEvent($event_id, true);
+
 
 		return $rs;
 	}
@@ -125,7 +128,7 @@ function getEvent($event_id, $getAll = false){
 
 
 		if($getAll){
-			//$rs['map'] = getMapList($rs['place_id'], true);
+			$rs['place'] = getPlace($rs['place_id'], true, $event_id);
 		}
 
 		
@@ -163,11 +166,11 @@ function getEventList($place_id, $getAll = false){
 		foreach ($event_list as &$event){
 			$event->date = strtotime($event->date);
 		}
-		/*if($getAll){
-			foreach ($event_list as &$event) {
-				$event->table = getTableList($event->event_id);
+		if($getAll){
+			foreach($event_list as &$event){
+				$event->table = getPlace($event->place_id);	//, true, $event->event_id);
 			}
-		}*/
+		}
 
 
 		$rs = [
@@ -186,11 +189,12 @@ function removeEvent($event_id){
 	global $__EVENT_PREFIX;
 	$prefix = $__EVENT_PREFIX;
 
-	//$map_deleted = removeMapList($event_id);
+	$table_booking_deleted = removeTableList("event_id", $event_id);
 
 	try{
 		global $DB_PDO;
 
+		
 		$stmt = $DB_PDO->prepare("DELETE FROM event WHERE event_id = :event_id");
 		$stmt->bindParam(':event_id', $event_id, PDO::PARAM_INT);
 		$stmt->execute();
@@ -200,8 +204,8 @@ function removeEvent($event_id){
 		}
 		
 		$rs = [
-			"event_id" => $event_id
-			//"map_deleted" => $map_deleted
+			"event_id" => $event_id,
+			"table_booking_deleted" => $table_booking_deleted
 		];
 
 		return $rs;
@@ -215,10 +219,16 @@ function removeEventList($place_id){
 	global $__EVENT_PREFIX;
 	$prefix = $__EVENT_PREFIX;
 
-	//$table_deleted = removeTableList("place_id", $place_id);
-
 	try{
 		global $DB_PDO;
+
+		
+		$stmt = $DB_PDO->prepare("DELETE FROM current_booking WHERE place_id = :place_id");
+		$stmt->bindParam(":place_id", $place_id, PDO::PARAM_INT);
+		$stmt->execute();
+		
+		$table_booking_deleted = $stmt->rowCount();
+
 
 		$stmt = $DB_PDO->prepare("DELETE FROM event WHERE place_id = :place_id");
 		$stmt->bindParam(":place_id", $place_id, PDO::PARAM_INT);
@@ -226,8 +236,11 @@ function removeEventList($place_id){
 				
 		$rs = [
 			"place_id" => $place_id,
-			"quantity" => $stmt->rowCount()
-			//"table_deleted" => $table_deleted
+			"quantity" => $stmt->rowCount(),
+			"table_booking_deleted" => [
+				"place_id" => $place_id,
+				"quantity" => $table_booking_deleted
+			]
 		];
 
 		return $rs;

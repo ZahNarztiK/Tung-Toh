@@ -17,12 +17,17 @@ function isTimeStamp($timestamp){
 	return preg_match($pattern, $timestamp);
 }
 
-function prepareJSON($prefix, $data, $default_data = []){
+function prepareJSON($prefix, $data, $default_data = [], $reject = true){
 	if(is_string($data)){
 		$data = json_decode($data, true);
 	}
 	if(!is_array($data)){
-		reject($prefix, "04", "JSON Error");
+		if($reject){
+			reject($prefix, "04", "JSON Error");
+		}
+		else{
+			return null;
+		}
 	}
 
 	return $data + $default_data;

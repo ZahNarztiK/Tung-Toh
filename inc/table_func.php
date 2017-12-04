@@ -7,6 +7,8 @@ if(!isset($_IN_SITE)){
 require_once("../../inc/db_connect.php");
 require_once("../../inc/init_response_func.php");
 require_once("../../inc/basic_func.php");
+require_once("../../inc/map_func.php");
+require_once("../../inc/event_func.php");
 
 $__TABLE_PREFIX = "IT";
 $__TABLE_DEFAULT = [
@@ -16,7 +18,13 @@ $__TABLE_DEFAULT = [
 	"rotation" => 0,
 	"table_type_id" => 0
 ];
-$__TABLE_INFO_QUERY = "table_id, map_id, place_id, code, X(location) as x, Y(location) as y, rotation, table_type_id";
+$__TABLE_QUERY = [];
+$__TABLE_QUERY['info'] =
+	"table_id, map_id, place_id, code, X(location) as x, Y(location) as y, rotation, table_type_id";
+$__TABLE_QUERY['info_db'] =
+	"table_id, map_id, place_id, code, location, rotation, table_type_id";
+$__TABLE_QUERY['event_info'] = 
+	"current_booking_ID, event_id, ".$__TABLE_QUERY["info"].", booking_id, active";
 
 
 
@@ -76,8 +84,8 @@ function addTable($table_raw){
 	}
 }
 
-function editTable($table_raw){
-	global $__TABLE_PREFIX;
+function editTable($table_raw, $event_id = null, $event_id_data = false){
+	global $__TABLE_PREFIX, $__EVENT_PREFIX;
 	$prefix = $__TABLE_PREFIX;
 
 	try{
@@ -85,19 +93,47 @@ function editTable($table_raw){
 
 		$table = prepareTableData($table_raw, true);
 
+		
+		if($event_id_data){
+			$is_event_param = ((isset($table['event_id']) && isPositiveInt($table['event_id'])));
+			if(!$is_event_param){
+				reject($__EVENT_PREFIX, "04", "Event ID KAK KAK");
+			}
+			$event_id = $table['event_id'];
+		}
+		else{
+			$is_event_param = isPositiveInt($event_id);
+		}
 
-		$stmt = $DB_PDO->prepare("SELECT table_id FROM `table` WHERE table_id = :table_id LIMIT 1");
+		if($is_event_param){
+			$main_db = "current_booking";
+			$main_cond = "event_id = :event_id AND";
+		}
+		else{
+			$main_db = "table";
+			$main_cond = "";
+		}
+
+
+		$stmt = $DB_PDO->prepare("SELECT map_id FROM `$main_db` WHERE $main_cond table_id = :table_id LIMIT 1");
+		if($is_event_param){
+			$stmt->bindParam(':event_id', $event_id, PDO::PARAM_INT);
+		}
 		$stmt->bindParam(':table_id', $table['table_id'], PDO::PARAM_INT);
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
 			reject($prefix, "14", "Table not found.");
 		}
+		$table['map_id'] = $stmt->fetchColumn();
 
 
-		$stmt = $DB_PDO->prepare("SELECT code FROM `table` WHERE map_id = :map_id AND code = :code AND table_id != :table_id LIMIT 1");
+		$stmt = $DB_PDO->prepare("SELECT code FROM `$main_db` WHERE $main_cond map_id = :map_id AND code = :code AND table_id != :table_id LIMIT 1");
 		$stmt->bindParam(':map_id', $table['map_id'], PDO::PARAM_INT);
 		$stmt->bindParam(':code', $table['code']);
+		if($is_event_param){
+			$stmt->bindParam(':event_id', $event_id, PDO::PARAM_INT);
+		}
 		$stmt->bindParam(':table_id', $table['table_id'], PDO::PARAM_INT);
 		$stmt->execute();
 		
@@ -106,14 +142,15 @@ function editTable($table_raw){
 		}
 
 
-		$stmt = $DB_PDO->prepare("UPDATE `table` SET code = :code, location = POINT(:x, :y), rotation = :rotation table_type_id = :table_type_id WHERE table_id = :table_id");
-		$stmt->bindParam(':map_id', $table['map_id'], PDO::PARAM_INT);
-		$stmt->bindParam(':place_id', $table['place_id'], PDO::PARAM_INT);
+		$stmt = $DB_PDO->prepare("UPDATE `$main_db` SET code = :code, location = POINT(:x, :y), rotation = :rotation, table_type_id = :table_type_id WHERE $main_cond table_id = :table_id");
 		$stmt->bindParam(':code', $table['code']);
 		$stmt->bindParam(':x', $table['x'], PDO::PARAM_INT);
 		$stmt->bindParam(':y', $table['y'], PDO::PARAM_INT);
 		$stmt->bindParam(':rotation', $table['rotation'], PDO::PARAM_INT);
 		$stmt->bindParam(':table_type_id', $table['table_type_id'], PDO::PARAM_INT);
+		if($is_event_param){
+			$stmt->bindParam(':event_id', $event_id, PDO::PARAM_INT);
+		}
 		$stmt->bindParam(':table_id', $table['table_id'], PDO::PARAM_INT);
 		$stmt->execute();
 		
@@ -121,6 +158,9 @@ function editTable($table_raw){
 		$rs = [
 			"table_id" => $table['table_id']
 		];
+		if($is_event_param){
+			$rs['event_id'] = $event_id;
+		}
 
 		return $rs;
 	}
@@ -129,15 +169,35 @@ function editTable($table_raw){
 	}
 }
 
-function getTable($table_id){
-	global $__TABLE_PREFIX, $__TABLE_INFO_QUERY;
+function getTable($table_id, $event_id = null){
+	global $__TABLE_PREFIX, $__TABLE_QUERY;
 	$prefix = $__TABLE_PREFIX;
+	$query = $__TABLE_QUERY['info'];
+
+	$is_event_param = isPositiveInt($event_id);
+	if($is_event_param){
+		$main_db = "current_booking";
+	}
+	else{
+		$main_db = "table";
+	}
 
 	try{
 		global $DB_PDO;
 
 
-		$stmt = $DB_PDO->prepare("SELECT $__TABLE_INFO_QUERY FROM `table` WHERE table_id = :table_id LIMIT 1");
+		if($is_event_param){
+			$stmt = $DB_PDO->prepare("SELECT event_id FROM event WHERE event_id = :event_id LIMIT 1");
+			$stmt->bindParam(':event_id', $event_id, PDO::PARAM_INT);
+			$stmt->execute();
+
+			if($stmt->rowCount() == 0){
+				reject($prefix, "14", "Event not found.");
+			}
+		}
+
+
+		$stmt = $DB_PDO->prepare("SELECT $query FROM `table` WHERE table_id = :table_id LIMIT 1");
 		$stmt->bindParam(':table_id', $table_id, PDO::PARAM_INT);
 		$stmt->execute();
 		
@@ -154,25 +214,46 @@ function getTable($table_id){
 	}
 }
 
-function getTableList($map_id){
-	global $__TABLE_PREFIX, $__TABLE_INFO_QUERY;
+function getTableList($map_id, $event_id = null){
+	global $__TABLE_PREFIX, $__TABLE_QUERY;
 	$prefix = $__TABLE_PREFIX;
+
+	$is_event_param = isPositiveInt($event_id);
+	if($is_event_param){
+		$main_key = "Event";
+		$main_id = "event_id";
+		$main_param_id = $event_id;
+		$main_db = "current_booking";
+		$main_cond = "event_id = :event_id AND";
+		$query = $__TABLE_QUERY["event_info"];
+	}
+	else{
+		$main_key = "Map";
+		$main_id = "map_id";
+		$main_param_id = $map_id;
+		$main_db = "table";
+		$main_cond = "";
+		$query = $__TABLE_QUERY["info"];
+	}
 
 	try{
 		global $DB_PDO;
 
 
-		$stmt = $DB_PDO->prepare("SELECT map_id FROM map WHERE map_id = :map_id LIMIT 1");
-		$stmt->bindParam(':map_id', $map_id, PDO::PARAM_INT);
+		$stmt = $DB_PDO->prepare("SELECT $main_id FROM $main_key WHERE $main_id = :$main_id LIMIT 1");
+		$stmt->bindParam(':'.$main_id, $main_param_id, PDO::PARAM_INT);
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Map not found.");
+			reject($prefix, "14", "$main_key not found.");
 		}
 
 
-		$stmt = $DB_PDO->prepare("SELECT $__TABLE_INFO_QUERY FROM `table` WHERE map_id = :map_id");
+		$stmt = $DB_PDO->prepare("SELECT $query FROM `$main_db` WHERE $main_cond map_id = :map_id");
 		$stmt->bindParam(':map_id', $map_id, PDO::PARAM_INT);
+		if($is_event_param){
+			$stmt->bindParam(':event_id', $event_id, PDO::PARAM_INT);
+		}
 		$stmt->execute();
 				
 		$rs = [
@@ -216,16 +297,25 @@ function removeTable($table_id){
 function removeTableList($identifier, $identifier_id){
 	global $__TABLE_PREFIX;
 	$prefix = $__TABLE_PREFIX;
-	$identifier_list = ["map_id", "place_id"];
+	$identifier_list = ["map_id", "place_id", "event_id"];
 
 	if(!in_array($identifier, $identifier_list) || notPositiveInt($identifier_id)){
 		reject($prefix, "09", "Identifier error.");
 	}
 
+	$is_event_param = ($identifier == "event_id");
+	if($is_event_param){
+		$main_db = "current_booking";
+	}
+	else{
+		$main_db = "table";
+	}
+
 	try{
 		global $DB_PDO;
 
-		$stmt = $DB_PDO->prepare("DELETE FROM `table` WHERE $identifier = :$identifier");
+		
+		$stmt = $DB_PDO->prepare("DELETE FROM `$main_db` WHERE $identifier = :$identifier");
 		$stmt->bindParam(":$identifier", $identifier_id, PDO::PARAM_INT);
 		$stmt->execute();
 		
@@ -241,13 +331,52 @@ function removeTableList($identifier, $identifier_id){
 	}
 }
 
-function prepareTableData($table_raw, $isEdit = false){
+function setupTableToEvent($event_id, $place_id){
+	global $__TABLE_PREFIX, $__TABLE_QUERY;
+	$prefix = $__TABLE_PREFIX;
+
+	try{
+		global $DB_PDO;
+
+
+		$stmt = $DB_PDO->prepare("SELECT map_id FROM map WHERE place_id = :place_id");
+		$stmt->bindParam(':place_id', $place_id, PDO::PARAM_INT);
+		$stmt->execute();
+		
+		if($stmt->rowCount() == 0){
+			reject($prefix, "14", "Map not found.");
+		}
+		$map_ids = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+
+		foreach($map_ids as $map_id){
+			$stmt = $DB_PDO->prepare("INSERT INTO current_booking (".$__TABLE_QUERY["info_db"].", event_id) SELECT ".$__TABLE_QUERY["info_db"].", :event_id FROM `table` WHERE map_id = :map_id");
+			$stmt->bindParam(':event_id', $event_id, PDO::PARAM_INT);
+			$stmt->bindParam(':map_id', $map_id, PDO::PARAM_INT);
+			$stmt->execute();
+		}
+
+
+		$rs = [
+			"event_id" => $event_id,
+			"place_id" => $place_id,
+			"map_ids" => $map_ids
+		];
+
+
+		return $rs;
+	}
+	catch(PDOException $e){
+		reject($prefix, "10", $e->getMessage());
+	}
+}
+
+function prepareTableData($table_raw, $isEdit = false, $reject = true){
 	global $__TABLE_PREFIX, $__TABLE_DEFAULT;
 
 	$error = [];
 	$prefix = $__TABLE_PREFIX;
 
-	$table = prepareJSON($prefix, $table_raw, $__TABLE_DEFAULT);
+	$table = prepareJSON($prefix, $table_raw, $__TABLE_DEFAULT, $reject);
 
 
 	if($isEdit && (!isset($table['table_id']) || notPositiveInt($table['table_id']))){
@@ -262,7 +391,12 @@ function prepareTableData($table_raw, $isEdit = false){
 	}
 
 	if(!empty($error)){
-		reject($prefix, "04", "Error parameter(s) - ".implode(", ", $error));
+		if($reject){
+			reject($prefix, "04", "Error parameter(s) - ".implode(", ", $error));
+		}
+		else{
+			return null;
+		}
 	}
 
 

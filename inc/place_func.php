@@ -115,9 +115,11 @@ function editPlace($place_raw){
 	}
 }
 
-function getPlace($place_id, $getAll = false){
+function getPlace($place_id, $getAll = false, $event_id = null){
 	global $__PLACE_PREFIX, $__PLACE_INFO_QUERY;
 	$prefix = $__PLACE_PREFIX;
+
+	$is_event_param = isPositiveInt($event_id);
 
 	try{
 		global $DB_PDO;
@@ -135,7 +137,12 @@ function getPlace($place_id, $getAll = false){
 
 
 		if($getAll){
-			$rs['map'] = getMapList($rs['place_id'], true);
+			if($is_event_param){
+				$rs['map'] = getMapList($rs['place_id'], true, $event_id);
+			}
+			else{
+				$rs['map'] = getMapList($rs['place_id'], true);
+			}
 		}
 
 		
@@ -151,6 +158,7 @@ function removePlace($place_id){
 	$prefix = $__PLACE_PREFIX;
 
 	$map_deleted = removeMapList($place_id);
+	$event_deleted = removeEventList($place_id);
 
 	try{
 		global $DB_PDO;
@@ -165,7 +173,8 @@ function removePlace($place_id){
 		
 		$rs = [
 			"place_id" => $place_id,
-			"map_deleted" => $map_deleted
+			"map_deleted" => $map_deleted,
+			"event_deleted" => $event_deleted
 		];
 
 		return $rs;

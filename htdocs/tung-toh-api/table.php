@@ -31,7 +31,7 @@ switch($_GET['method']){
 		if(isset($_GET['table_id']) && isPositiveInt($_GET['table_id'])){
 			$rs = getTable($_GET['table_id']);
 		}
-		elseif (isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])) {
+		elseif(isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])){
 			$rs = getTableList($_GET['map_id']);
 		}
 		else{
@@ -46,10 +46,10 @@ switch($_GET['method']){
 		if(isset($_GET['table_id']) && isPositiveInt($_GET['table_id'])){
 			$rs = removeTable($_GET['table_id']);
 		}
-		elseif (isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])) {
+		elseif(isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])){
 			$rs = removeTableList("map_id", $_GET['map_id']);
 		}
-		elseif (isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])) {
+		elseif(isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])){
 			$rs = removeTableList("place_id", $_GET['place_id']);
 		}
 		else{

@@ -37,7 +37,7 @@ switch($_GET['method']){
 		if(isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])){
 			$rs = getMap($_GET['map_id'], $getAll);
 		}
-		elseif (isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])) {
+		elseif(isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])){
 			$rs = getMapList($_GET['place_id'], $getAll);
 		}
 		else{
@@ -52,7 +52,7 @@ switch($_GET['method']){
 		if(isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])){
 			$rs = removeMap($_GET['map_id']);
 		}
-		elseif (isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])) {
+		elseif(isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])){
 			$rs = removeMapList($_GET['place_id']);
 		}
 		else{

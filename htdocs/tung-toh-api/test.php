@@ -5,8 +5,22 @@ echo "---===[ Test ]===---<br><br>";
 //ini_set('display_errors', 'On');
 //set_error_handler("var_dump");
 
-$kuy = ["ok"=>9];
-//var_dump($kuy);
+$kuy = ["asd","asdfsdaf","411471"];//["ok"=>9,"aaa"=>1,"asdf"=>999];
+var_dump($kuy);
+lol($kuy);
+
+
+function lol(&$eiei){
+	foreach ($eiei as $key => $value) {
+		unset($eiei[$key]);
+		
+	}
+}
+
+var_dump($kuy);
+
+echo "<br><br><br>";
+echo (null ==0?"T":"F");
 //echo is_numeric("123")?"true":"false";
 
 
