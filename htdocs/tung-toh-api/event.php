@@ -14,21 +14,24 @@ switch($_GET['method']){
 	case "add":
 		access_check($__EVENT_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
-		$rs = addEvent($_POST['data']);
+		$data = data_check($__EVENT_PREFIX);
+		$rs = addEvent($data);
 
 		$success_msg = "Add hai la!";
 		break;
 	case "edit":
 		access_check($__EVENT_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
-		$rs = editEvent($_POST['data']);
+		$data = data_check($__EVENT_PREFIX);
+		$rs = editEvent($data);
 		
 		$success_msg = "Edit laew woi~";
 		break;
 	case "edittable":
 		access_check($__TABLE_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
-		$rs = editTable($_POST['data'], null, true);
+		$data = data_check($__EVENT_PREFIX);
+		$rs = editTable($data, null, true);
 		
 		$success_msg = "Edit laew woi~";
 		break;

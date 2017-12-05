@@ -15,14 +15,16 @@ switch($_GET['method']){
 	case "add":
 		access_check($__PLACE_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
-		$rs = addPlace($_POST['data']);
+		$data = data_check($__PLACE_PREFIX);
+		$rs = addPlace($data);
 
 		$success_msg = "Add hai la!";
 		break;
 	case "edit":
 		access_check($__PLACE_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
-		$rs = editPlace($_POST['data']);
+		$data = data_check($__PLACE_PREFIX);
+		$rs = editPlace($data);
 		
 		$success_msg = "Edit laew woi~";
 		break;

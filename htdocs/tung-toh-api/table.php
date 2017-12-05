@@ -14,14 +14,16 @@ switch($_GET['method']){
 	case "add":
 		access_check($__TABLE_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
-		$rs = addTable($_POST['data']);
+		$data = data_check($__TABLE_PREFIX);
+		$rs = addTable($data);
 
 		$success_msg = "Add hai la!";
 		break;
 	case "edit":
 		access_check($__TABLE_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
-		$rs = editTable($_POST['data']);
+		$data = data_check($__TABLE_PREFIX);
+		$rs = editTable($data);
 		
 		$success_msg = "Edit laew woi~";
 		break;

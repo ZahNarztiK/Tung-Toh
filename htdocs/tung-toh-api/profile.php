@@ -15,7 +15,8 @@ switch($_GET['method']){
 	case "edit":
 		access_check($__PROFILE_PREFIX, $__ACCESS_CONSTANT['LOGGEDIN'], true);
 
-		$rs = editProfile($_POST['data']);
+		$data = data_check($__PROFILE_PREFIX);
+		$rs = editProfile($data);
 		
 		$success_msg = "Edit laew woi~";
 		break;

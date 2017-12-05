@@ -8,6 +8,7 @@ if(!isset($_SESSION)){
 }
 
 require_once("../../inc/init_response_func.php");
+require_once("../../inc/basic_func.php");
 
 $__ACCESS_CONSTANT = [
 	"LOGGEDIN" => 0,
@@ -23,14 +24,18 @@ function access_check($prefix, $previlege = 0, $DataRequired = false){
 		reject($prefix, "90", "Access denied, eiei olo.");
 	}
 	if($DataRequired){
-		data_check();
+		return data_check($prefix);
 	}
 }
 
 function data_check($prefix){
-	if(!isset($_POST['data'])){
+	$data = prepareJSON($prefix, file_get_contents("php://input"));
+	
+	if(empty($data)){
 		reject($prefix, "04", "No data KUYKUYKUYKUY!!!");
 	}
+
+	return $data;
 }
 
 ?>

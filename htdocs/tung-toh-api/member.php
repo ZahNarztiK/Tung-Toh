@@ -18,47 +18,48 @@ if(!isset($_GET['method'])){
 switch($_GET['method']){
 	case "register":
 		$__MEMBER_PREFIX = $__REGISTER_PREFIX;
-		data_check($__MEMBER_PREFIX);
 
-		$rs = run_RLS_set("add_member");
+		$data = data_check($__MEMBER_PREFIX);
+		$rs = run_RLS_set("add_member", $data);
 		
 		$success_msg = "Samuk dai la!";
 		break;
 	case "login":
 		$__MEMBER_PREFIX = $__LOGIN_PREFIX;
-		data_check($__MEMBER_PREFIX);
 
-		$rs = run_RLS_set("login");
+		$data = data_check($__MEMBER_PREFIX);
+		$rs = run_RLS_set("login", $data);
 
 		$success_msg = "Login dai la!";
 		break;
 	case "verifySession":
 		$__MEMBER_PREFIX = $__VERIFYSESSION_PREFIX;
-		data_check($__MEMBER_PREFIX);
-		
-		$rs = run_RLS_set("verifySession");
+
+		$data = data_check($__MEMBER_PREFIX);
+		$rs = run_RLS_set("verifySession", $data);
 
 		$success_msg = "Login dai la!";
 		break;
 	case "logout":
 		$__MEMBER_PREFIX = $__LOGIN_PREFIX;
+
 		$rs = logout();
 
 		$success_msg = "Session cleared!";
 		break;
 	case "forgetpwd":
 		$__MEMBER_PREFIX = $__FORGET_PREFIX;
-		data_check($__MEMBER_PREFIX);
-		
-		$rs = forgetPassword($_POST['data']);
+
+		$data = data_check($__MEMBER_PREFIX);
+		$rs = forgetPassword($data);
 
 		$success_msg = "Arn mail duay";
 		break;
 	case "resetpwd":
 		$__MEMBER_PREFIX = $__RESETPWD_PREFIX;
-		data_check($__MEMBER_PREFIX);
 		
-		$rs = resetPassword($_POST['data']);
+		$data = data_check($__MEMBER_PREFIX);
+		$rs = resetPassword($data);
 
 		$success_msg = "Ahhhh yeahh~~~~";
 		break;

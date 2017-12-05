@@ -14,14 +14,16 @@ switch($_GET['method']){
 	case "add":
 		access_check($__MAP_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
-		$rs = addMap($_POST['data']);
+		$data = data_check($__MAP_PREFIX);
+		$rs = addMap($data);
 
 		$success_msg = "Add hai la!";
 		break;
 	case "edit":
 		access_check($__MAP_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
 
-		$rs = editMap($_POST['data']);
+		$data = data_check($__MAP_PREFIX);
+		$rs = editMap($data);
 		
 		$success_msg = "Edit laew woi~";
 		break;
