@@ -1,11 +1,12 @@
 Default Response JSON
 {
 	"message_code" : "-1",
+	"message_numeric_code" : "-1",
 	"message_description" : "",
 	"data" : {}
 }
 
-All data will be received & returned as JSON named "data" inside Response JSON, except the input in [register, login, verifySession, & GET method].
+All data will be received & returned as JSON named "data" inside Response JSON, except the input in [GET] method.
 
 Method is required in GET form; method=[add/edit/get/getall/remove/...]
 ie. member.php?method=register, map.php?method=get&place_id=1, etc.
@@ -14,11 +15,15 @@ ie. member.php?method=register, map.php?method=get&place_id=1, etc.
 ##### Member #####
 
 member.php?method=register, member.php?method=login [POST]
-* "email" (string)
-* "password" (string)
+"data" : {
+*	"email" (string)
+*	"password" (string)
+}
 
 member.php?method=verifySession [POST]
-* "session_id" (string)
+"data" : {
+*	"session_id" (string)
+}
 
 
 [Login Data] Response (Succeeded)
@@ -47,7 +52,9 @@ Response
 ----------
 
 member.php?method=forget [POST]
+"data" : {
 *	"email" (string)
+}
 
 Response
 "data" : {
@@ -57,9 +64,11 @@ Response
 ----------
 
 member.php?method=resetpwd [POST]
+"data" : {
 *	"email" (string)
 *	"code" (string)
 	"password" (string) [declare if password change needed]
+}
 
 Response
 "data" : {

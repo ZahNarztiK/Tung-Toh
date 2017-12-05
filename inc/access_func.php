@@ -22,7 +22,13 @@ function access_check($prefix, $previlege = 0, $DataRequired = false){
 	if($_SESSION['verified'] < $previlege){
 		reject($prefix, "90", "Access denied, eiei olo.");
 	}
-	if($DataRequired && !isset($_POST['data'])){
+	if($DataRequired){
+		data_check();
+	}
+}
+
+function data_check($prefix){
+	if(!isset($_POST['data'])){
 		reject($prefix, "04", "No data KUYKUYKUYKUY!!!");
 	}
 }

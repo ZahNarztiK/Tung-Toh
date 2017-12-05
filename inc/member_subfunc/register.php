@@ -8,7 +8,7 @@ $__REGISTER_PREFIX = "MR";
 
 
 
-function add_member(){
+function add_member($member_raw){
 	global $__REGISTER_PREFIX;
 	$prefix = $__REGISTER_PREFIX;
 
@@ -16,10 +16,10 @@ function add_member(){
 		global $DB_PDO;
 
 		
-		register_infoCheck();
+		$member = register_infoCheck($member_raw);
 
-		$email = $_POST['email'];
-		$password = md5($_POST['password']);
+		$email = $member['email'];
+		$password = md5($member['password']);
 
 
 		$stmt = $DB_PDO->prepare("SELECT member_id FROM member WHERE email = :email LIMIT 1");
@@ -59,21 +59,27 @@ function add_member(){
 	}
 }
 
-function register_infoCheck(){
+function register_infoCheck($member_raw){
 	global $__REGISTER_PREFIX;
 	$prefix = $__REGISTER_PREFIX;
 
-	if(!isset($_POST['email']) || !isset($_POST['password'])){
+	$member = prepareJSON($prefix, $member_raw);
+
+
+	if(!isset($member['email']) || !isset($member['password'])){
 		reject($prefix, "04", "Kor moon mai krob, ai kuy!!!");
 	}
 
-	if(!valid_email($_POST['email'])){
+	if(!valid_email($member['email'])){
 		reject($prefix, "04", "Email pid, ai kwai");
 	}
 
-	if(!valid_password($_POST['email'])){
+	if(!valid_password($member['password'])){
 		reject($prefix, "04", "Mai me pass, ai har");
 	}
+
+
+	return $member;
 }
 
 ?>

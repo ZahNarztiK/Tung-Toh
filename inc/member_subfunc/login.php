@@ -8,7 +8,7 @@ $__LOGIN_PREFIX = "ML";
 
 
 
-function login(){
+function login($login_raw){
 	global $__LOGIN_PREFIX;
 	$prefix = $__LOGIN_PREFIX;
 
@@ -16,10 +16,10 @@ function login(){
 		global $DB_PDO;
 
 		
-		login_infoCheck();
+		$login = login_infoCheck($login_raw);
 
-		$email = $_POST['email'];
-		$password = md5($_POST['password']);
+		$email = $login['email'];
+		$password = md5($login['password']);
 		
 
 		$stmt = $DB_PDO->prepare("SELECT member_id, email, session_id, verified FROM member WHERE email = :email and password = :password LIMIT 1");
@@ -49,21 +49,27 @@ function login(){
 	}
 }
 
-function login_infoCheck(){
+function login_infoCheck($login_raw){
 	global $__LOGIN_PREFIX;
 	$prefix = $__LOGIN_PREFIX;
 
-	if(!isset($_POST['email']) || !isset($_POST['password'])){
+	$login = prepareJSON($prefix, $login_raw);
+
+
+	if(!isset($login['email']) || !isset($login['password'])){
 		reject($prefix, "04", "Kor moon mai krob, ai kuy!!!");
 	}
 
-	if(!valid_email($_POST['email'])){
+	if(!valid_email($login['email'])){
 		reject($prefix, "04", "Email pid, ai kwai");
 	}
 
-	if(!valid_password($_POST['email'])){
+	if(!valid_password($login['password'])){
 		reject($prefix, "04", "Mai me pass, ai har");
 	}
+
+
+	return $login;
 }
 
 ?>

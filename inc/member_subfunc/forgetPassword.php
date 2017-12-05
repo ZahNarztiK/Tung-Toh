@@ -34,7 +34,7 @@ $__FORGET_SMS = [];
 
 
 
-function forgetPassword(){
+function forgetPassword($forgetpwd_raw){
 	global $__FORGET_PREFIX, $__FORGET_EMAIL;
 	$prefix = $__FORGET_PREFIX;
 
@@ -44,9 +44,9 @@ function forgetPassword(){
 		global $DB_PDO;
 
 		
-		forget_infoCheck();
+		$forgetpwd = forget_infoCheck($forgetpwd_raw);
 
-		$email = $_POST['email'];
+		$email = $forgetpwd['email'];
 		
 
 		$stmt = $DB_PDO->prepare("SELECT member_id, firstname, lastname FROM member WHERE email = :email LIMIT 1");
@@ -153,13 +153,19 @@ function forgetPassword(){
 	}
 }
 
-function forget_infoCheck(){
+function forget_infoCheck($forgetpwd_raw){
 	global $__FORGET_PREFIX;
 	$prefix = $__FORGET_PREFIX;
 
-	if(!isset($_POST['email']) || !valid_email($_POST['email'])){
+	$forgetpwd = prepareJSON($prefix, $forgetpwd_raw);
+
+
+	if(!isset($forgetpwd['email']) || !valid_email($forgetpwd['email'])){
 		reject($prefix, "04", "Song email ma dd noi.");
 	}
+
+
+	return $forgetpwd;
 }
 
 ?>

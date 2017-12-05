@@ -47,7 +47,7 @@ function get_login_response(){
 
 function run_RLS_set($func){
 	init_login_response();
-	$rs = $func();
+	$rs = $func($_POST['data']);
 	set_session($rs);
 
 	$rs = get_login_response();

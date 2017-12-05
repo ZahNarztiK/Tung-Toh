@@ -8,7 +8,7 @@ $__RESETPWD_PREFIX = "MP";
 
 
 
-function resetPassword(){
+function resetPassword($resetpwd_raw){
 	global $__RESETPWD_PREFIX;
 	$prefix = $__RESETPWD_PREFIX;
 
@@ -18,10 +18,10 @@ function resetPassword(){
 		global $DB_PDO;
 
 		
-		resetPwd_infoCheck();
+		$resetpwd = resetPwd_infoCheck($resetpwd_raw);
 
-		$email = $_POST['email'];
-		$code = $_POST['code'];
+		$email = $resetpwd['email'];
+		$code = $resetpwd['code'];
 		$now = date("Y-m-d H:i:s");
 		echo $now;
 		
@@ -36,13 +36,13 @@ function resetPassword(){
 		}
 
 
-		if(!isset($_POST['password'])){
+		if(!isset($resetpwd['password'])){
 			$status = 1;
 		}
 		else{
 			$member_id = $stmt->fetchColumn();
 
-			$password = md5($_POST['password']);
+			$password = md5($resetpwd['password']);
 			$session_id = md5($email.$password);
 			
 			$stmt = $DB_PDO->prepare("UPDATE member SET password = :password, forget_code = '', forget_code_expired = NULL, session_id = :session_id WHERE member_id = :member_id");
@@ -66,19 +66,25 @@ function resetPassword(){
 	}
 }
 
-function resetPwd_infoCheck(){
+function resetPwd_infoCheck($resetpwd_raw){
 	global $__RESETPWD_PREFIX;
 	$prefix = $__RESETPWD_PREFIX;
 
-	if(!isset($_POST['email']) || !valid_email($_POST['email'])){
+	$resetpwd = prepareJSON($prefix, $resetpwd_raw);
+
+	
+	if(!isset($resetpwd['email']) || !valid_email($resetpwd['email'])){
 		reject($prefix, "04", "Song email ma dd noi.");
 	}
-	if(!isset($_POST['code']) || $_POST['code'] == ""){
+	if(!isset($resetpwd['code']) || $resetpwd['code'] == ""){
 		reject($prefix, "04", "Code la kub ai sas?");
 	}
-	if(isset($_POST['password']) && !valid_password($_POST['password'])){
+	if(isset($resetpwd['password']) && !valid_password($resetpwd['password'])){
 		reject($prefix, "04", "Password kak sus.");
 	}
+
+
+	return $resetpwd;
 }
 
 ?>

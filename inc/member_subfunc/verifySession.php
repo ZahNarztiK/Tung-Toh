@@ -8,7 +8,7 @@ $__VERIFYSESSION_PREFIX = "MS";
 
 
 
-function verifySession(){
+function verifySession($session_raw){
 	global $__VERIFYSESSION_PREFIX;
 	$prefix = $__VERIFYSESSION_PREFIX;
 
@@ -16,9 +16,9 @@ function verifySession(){
 		global $DB_PDO;
 		
 
-		verifySession_infoCheck();
+		$session = verifySession_infoCheck($session_raw);
 
-		$session_id = $_POST['session_id'];
+		$session_id = $session['session_id'];
 		
 
 		$stmt = $DB_PDO->prepare("SELECT member_id, email, verified FROM member WHERE (session_id = :session_id) LIMIT 1");
@@ -39,13 +39,19 @@ function verifySession(){
 	}
 }
 
-function verifySession_infoCheck(){
+function verifySession_infoCheck($session_raw){
 	global $__VERIFYSESSION_PREFIX;
 	$prefix = $__VERIFYSESSION_PREFIX;
 
-	if(!isset($_POST['session_id'])){
+	$session = prepareJSON($prefix, $session_raw);
+
+
+	if(!isset($session['session_id'])){
 		reject($prefix, "04", "Session la', ai juy??");
 	}
+
+
+	return $session;
 }
 
 ?>
