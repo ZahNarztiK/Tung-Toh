@@ -1,6 +1,6 @@
 Default Response JSON
 {
-	"message_code" : "-1",
+	"message_code" : "--",
 	"message_numeric_code" : "-1",
 	"message_description" : "",
 	"data" : {}
@@ -51,7 +51,7 @@ Response
 
 ----------
 
-member.php?method=forget [POST]
+member.php?method=forgetpwd [POST]
 "data" : {
 *	"email" (string)
 }

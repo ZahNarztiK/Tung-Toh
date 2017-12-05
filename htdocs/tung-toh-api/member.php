@@ -46,7 +46,7 @@ switch($_GET['method']){
 
 		$success_msg = "Session cleared!";
 		break;
-	case "forget":
+	case "forgetpwd":
 		$__MEMBER_PREFIX = $__FORGET_PREFIX;
 		data_check($__MEMBER_PREFIX);
 		
