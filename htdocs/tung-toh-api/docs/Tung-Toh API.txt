@@ -221,7 +221,7 @@ data : {
 	event_id (int)
 	[Table Data]
 	booking_id (int)
-	active (bool) [True if published]
+	active (int) [-1: Table removed, 0: Table present but not available, 1: Table avilable, 2: Table booked]
 }
 
 [Table Booking List Data] Response (map_id)

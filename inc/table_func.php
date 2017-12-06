@@ -126,7 +126,7 @@ function editTable($table_raw, $event_id = null, $event_id_data = false){
 		$table['map_id'] = $stmt->fetchColumn();
 
 
-		$stmt = $DB_PDO->prepare("SELECT code FROM `$main_db` WHERE $main_cond map_id = :map_id AND code = :code AND table_id != :table_id LIMIT 1");
+		/*$stmt = $DB_PDO->prepare("SELECT code FROM `$main_db` WHERE $main_cond map_id = :map_id AND code = :code AND table_id != :table_id LIMIT 1");
 		$stmt->bindParam(':map_id', $table['map_id'], PDO::PARAM_INT);
 		$stmt->bindParam(':code', $table['code']);
 		if($is_event_param){
@@ -137,11 +137,11 @@ function editTable($table_raw, $event_id = null, $event_id_data = false){
 		
 		if($stmt->rowCount() > 0){
 			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_DUPLICATED'], "Duplicated table code.");
-		}
+		}*/
 
 
-		$stmt = $DB_PDO->prepare("UPDATE `$main_db` SET code = :code, location = POINT(:x, :y), rotation = :rotation, table_type_id = :table_type_id WHERE $main_cond table_id = :table_id");
-		$stmt->bindParam(':code', $table['code']);
+		$stmt = $DB_PDO->prepare("UPDATE `$main_db` SET location = POINT(:x, :y), rotation = :rotation, table_type_id = :table_type_id WHERE $main_cond table_id = :table_id");
+		//$stmt->bindParam(':code', $table['code']);
 		$stmt->bindParam(':x', $table['x'], PDO::PARAM_INT);
 		$stmt->bindParam(':y', $table['y'], PDO::PARAM_INT);
 		$stmt->bindParam(':rotation', $table['rotation'], PDO::PARAM_INT);
@@ -372,10 +372,12 @@ function prepareTableData($table_raw, $isEdit = false, $reject = true){
 
 	$required_data = [
 		"+int*" => [ ($isEdit ? "table_id" : "map_id") ],
-		"str*" => [ "code" ],
 		"int" => [ "x", "y", "rotation" ],
 		"+int" => [ "table_type_id" ]
 	];
+	if(!$isEdit){
+		$required_data['str*'] = [ "code" ];
+	}
 
 	$table = prepareJSON($prefix, $table_raw, $required_data, $__TABLE_DEFAULT, $reject);
 
