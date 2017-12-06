@@ -13,8 +13,8 @@ require_once("../../inc/table_func.php");
 $GLOBALS['PLACE_PREFIX'] = "IP";
 $__PLACE_DEFAULT = [
 	"name" => "",
-	"latitude" => "",
-	"longitude" => "",
+	"latitude" => "0.0",
+	"longitude" => "0.0",
 	"logo_image" => "",
 	"info" => ""
 ];
@@ -183,37 +183,18 @@ function removePlace($place_id){
 
 function preparePlaceData($place_raw, $isEdit = false){
 	global $__PLACE_DEFAULT;
-
-	$error = [];
 	$prefix = $GLOBALS['PLACE_PREFIX'];
 
-	$place = prepareJSON($prefix, $place_raw, $__PLACE_DEFAULT);
-
-
-	if($isEdit && (!isset($place['place_id']) || notPositiveInt($place['place_id']))){
-		$error[] = "Place ID";
-	}
-	$place['name'] = trim($place['name']);
-	if($place['name'] == ""){
-		$error[] = "Name";
-	}
-	$place['latitude'] = trim($place['latitude']);
-	if(!is_numeric($place['latitude'])){
-		$error[] = "Latitude";
-	}
-	$place['longitude'] = trim($place['longitude']);
-	if(!is_numeric($place['longitude'])){
-		$error[] = "Longitude";
+	$required_data = [
+		"str*" => [ "name" ],
+		"float*" => [ "latitude", "longitude" ],
+		"str" => [ "logo_image", "info" ]
+	];
+	if($isEdit){
+		$required_data = [ "+int*" => [ "place_id" ] ] + $required_data;
 	}
 
-	if(!empty($error)){
-		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Error parameter(s) - ".implode(", ", $error));
-	}
-
-
-	$place['logo_image'] = trim($place['logo_image']);
-	$place['info'] = trim($place['info']);
-
+	$place = prepareJSON($prefix, $place_raw, $required_data, $__PLACE_DEFAULT);
 
 	return $place;
 }

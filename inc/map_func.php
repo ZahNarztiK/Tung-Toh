@@ -11,8 +11,6 @@ require_once("../../inc/table_func.php");
 
 $GLOBALS['MAP_PREFIX'] = "IM";
 $__MAP_DEFAULT = [
-	//"width" => 0,
-	//"height" => 0,
 	"name" => "",
 	"info" => "",
 	"bg_image" => ""
@@ -248,41 +246,14 @@ function removeMapList($place_id){
 
 function prepareMapData($map_raw, $isEdit = false){
 	global $__MAP_DEFAULT;
-
-	$error = [];
 	$prefix = $GLOBALS['MAP_PREFIX'];
 
-	$map = prepareJSON($prefix, $map_raw, $__MAP_DEFAULT);
+	$required_data = [
+		"+int*" => [ ($isEdit ? "map_id" : "place_id"), "width", "height" ],
+		"str" => [ "name", "info", "bg_image" ]
+	];
 
-
-	if($isEdit && (!isset($map['map_id']) || notPositiveInt($map['map_id']))){
-		$error[] = "Map ID";
-	}
-	if(!$isEdit && (!isset($map['place_id']) || notPositiveInt($map['place_id']))){
-		$error[] = "Place ID";
-	}
-	if(!isset($map['width']) || notPositiveInt($map['width'])){
-		$error[] = "Width";
-	}
-	if(!isset($map['height']) || notPositiveInt($map['height'])){
-		$error[] = "Height";
-	}
-
-	if(!empty($error)){
-		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Error parameter(s) - ".implode(", ", $error));
-	}
-
-
-	//if(!isset($map['width']) || notPositiveInt($map['width'])){
-	//	$map['width'] = $__MAP_DEFAULT['width'];
-	//}
-	//if(!isset($map['height']) || notPositiveInt($map['height'])){
-	//	$map['height'] = $__MAP_DEFAULT['height'];
-	//}
-	$map['name'] = trim($map['name']);
-	$map['info'] = trim($map['info']);
-	$map['bg_image'] = trim($map['bg_image']);
-
+	$map = prepareJSON($prefix, $map_raw, $required_data, $__MAP_DEFAULT);
 
 	return $map;
 }

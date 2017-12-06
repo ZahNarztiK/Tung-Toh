@@ -6,66 +6,72 @@ $_IN_SITE = true;
 require_once("../../inc/access_func.php");
 require_once("../../inc/table_func.php");
 
+$prefix = $GLOBALS['TABLE_PREFIX'];
+
 if(!isset($_GET['method'])){
-	reject($GLOBALS['TABLE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "No method");
+	reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "No method");
 }
 
 switch($_GET['method']){
 	case "add":
-		access_check($GLOBALS['TABLE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
+		access_check($prefix, $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
-		$data = data_check($GLOBALS['TABLE_PREFIX']);
+		$data = data_check($prefix);
 		$rs = addTable($data);
 
 		$success_msg = "Add hai la!";
 		break;
+		
 	case "edit":
-		access_check($GLOBALS['TABLE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
+		access_check($prefix, $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
-		$data = data_check($GLOBALS['TABLE_PREFIX']);
+		$data = data_check($prefix);
 		$rs = editTable($data);
 		
 		$success_msg = "Edit laew woi~";
 		break;
-	case "get":
-		access_check($GLOBALS['TABLE_PREFIX']);
 
-		if(isset($_GET['table_id']) && isPositiveInt($_GET['table_id'])){
+	case "get":
+		access_check($prefix);
+
+		if(screenData($_GET, [ "+int*" => "table_id" ])){
 			$rs = getTable($_GET['table_id']);
 		}
-		elseif(isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])){
+		elseif(screenData($_GET, [ "+int*" => "map_id" ])){
 			$rs = getTableList($_GET['map_id']);
 		}
 		else{
-			reject($GLOBALS['TABLE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Table/Map ID????");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Table/Map ID????");
 		}
 
 		$success_msg = "Ow pai!";
 		break;
-	case "remove":
-		access_check($GLOBALS['TABLE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN']);
 
-		if(isset($_GET['table_id']) && isPositiveInt($_GET['table_id'])){
+	case "remove":
+		access_check($prefix, $GLOBALS['ACCESS_CONSTANT']['ADMIN']);
+
+		if(screenData($_GET, [ "+int*" => "table_id" ])){
 			$rs = removeTable($_GET['table_id']);
 		}
-		elseif(isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])){
+		elseif(screenData($_GET, [ "+int*" => "map_id" ])){
 			$rs = removeTableList("map_id", $_GET['map_id']);
 		}
-		elseif(isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])){
+		elseif(screenData($_GET, [ "+int*" => "place_id" ])){
 			$rs = removeTableList("place_id", $_GET['place_id']);
 		}
 		else{
-			reject($GLOBALS['TABLE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Table/Map ID/Place ID????");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Table/Map ID/Place ID????");
 		}
 
 		$success_msg = "Lob la na jaa!";
 		break;
+
 	default:
-		reject($GLOBALS['TABLE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Method KUY RAI SUS!!?!??!?");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Method KUY RAI SUS!!?!??!?");
 		break;
 }
 
 set_response($rs);
-success($GLOBALS['TABLE_PREFIX'], $success_msg);
+success($prefix, $success_msg);
 
 ?>

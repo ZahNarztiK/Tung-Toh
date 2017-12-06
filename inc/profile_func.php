@@ -96,30 +96,17 @@ function checkProfileAccess($member_id){
 
 function prepareProfileData($profile_raw, $isEdit = false){
 	global $__PROFILE_DEFAULT;
-
-	$error = [];
 	$prefix = $GLOBALS['PROFILE_PREFIX'];
 
-	$profile = prepareJSON($prefix, $profile_raw, $__PROFILE_DEFAULT);
-
-
-	if($isEdit && (!isset($profile['member_id']) || notPositiveInt($profile['member_id']))){
-		$error[] = "Member ID";
+	$required_data = [
+		"str*" => [ "name" ],
+		"str" => [ "firstname", "lastname", "tel", "profile_image" ]
+	];
+	if($isEdit){
+		$required_data = [ "+int*" => [ "member_id" ] ] + $required_data;
 	}
 
-	if(!empty($error)){
-		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Error parameter(s) - ".implode(", ", $error));
-	}
-
-
-	$profile['firstname'] = trim($profile['firstname']);
-	$profile['lastname'] = trim($profile['lastname']);
-	$profile['tel'] = trim($profile['tel']);
-	if(!validTel($profile['tel'])){
-		$profile['tel'] = $__PROFILE_DEFAULT['tel'];
-	}
-	$profile['profile_image'] = trim($profile['profile_image']);
-
+	$profile = prepareJSON($prefix, $profile_raw, $required_data, $__PROFILE_DEFAULT);
 
 	return $profile;
 }

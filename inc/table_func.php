@@ -368,47 +368,16 @@ function setupTableToEvent($event_id, $place_id){
 
 function prepareTableData($table_raw, $isEdit = false, $reject = true){
 	global $__TABLE_DEFAULT;
-
-	$error = [];
 	$prefix = $GLOBALS['TABLE_PREFIX'];
 
-	$table = prepareJSON($prefix, $table_raw, $__TABLE_DEFAULT, $reject);
+	$required_data = [
+		"+int*" => [ ($isEdit ? "table_id" : "map_id") ],
+		"str*" => [ "code" ],
+		"int" => [ "x", "y", "rotation" ],
+		"+int" => [ "table_type_id" ]
+	];
 
-
-	if($isEdit && (!isset($table['table_id']) || notPositiveInt($table['table_id']))){
-		$error[] = "Table ID";
-	}
-	if(!$isEdit && (!isset($table['map_id']) || notPositiveInt($table['map_id']))){
-		$error[] = "Map ID";
-	}
-	$table['code'] = trim($table['code']);
-	if($table['code'] == ""){
-		$error[] = "Table Code";
-	}
-
-	if(!empty($error)){
-		if($reject){
-			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Error parameter(s) - ".implode(", ", $error));
-		}
-		else{
-			return null;
-		}
-	}
-
-
-	if(is_nan($table['x'])){
-		$table['x'] = $__TABLE_DEFAULT['x'];
-	}
-	if(is_nan($table['y'])){
-		$table['y'] = $__TABLE_DEFAULT['y'];
-	}
-	if(is_nan($table['rotation'])){
-		$table['rotation'] = $__TABLE_DEFAULT['rotation'];
-	}
-	if(notPositiveInt($table['table_type_id'])){
-		$table['table_type_id'] = $__TABLE_DEFAULT['table_type_id'];
-	}
-
+	$table = prepareJSON($prefix, $table_raw, $required_data, $__TABLE_DEFAULT, $reject);
 
 	return $table;
 }

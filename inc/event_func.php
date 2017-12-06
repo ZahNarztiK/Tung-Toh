@@ -15,8 +15,7 @@ $GLOBALS['EVENT_PREFIX'] = "IE";
 $__EVENT_DEFAULT = [
 	"name" => "",
 	"info" => "",
-	"image" => "",
-	"table_list" => []
+	"image" => ""
 ];
 $__EVENT_INFO_QUERY = "event_id, name, place_id, date, info, image, active";
 
@@ -248,36 +247,18 @@ function removeEventList($place_id){
 
 function prepareEventData($event_raw, $isEdit = false){
 	global $__EVENT_DEFAULT;
-
-	$error = [];
 	$prefix = $GLOBALS['EVENT_PREFIX'];
 
-	$event = prepareJSON($prefix, $event_raw, $__EVENT_DEFAULT);
-
-
-	if($isEdit && (!isset($event['event_id']) || notPositiveInt($event['event_id']))){
-		$error[] = "Event ID";
-	}
-	$event['name'] = trim($event['name']);
-	if($event['name'] == ""){
-		$error[] = "Name";
-	}
-	if(!isset($event['place_id']) || notPositiveInt($event['place_id'])){
-		$error[] = "Place ID";
-	}
-	if(!isset($event['date']) || notPositiveInt($event['date'])){
-		$error[] = "Date";
-	}
-	$event['date'] = date("Y-m-d H:i:s", $event['date']);
-
-	if(!empty($error)){
-		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Error parameter(s) - ".implode(", ", $error));
+	$required_data = [
+		"str*" => [ "name" ],
+		"+int*" => [ "place_id", "date" ],
+		"str" => [ "info", "image" ]
+	];
+	if($isEdit){
+		$required_data['+int*'] += [ "event_id" ];
 	}
 
-
-	$event['info'] = trim($event['info']);
-	$event['image'] = trim($event['image']);
-
+	$event = prepareJSON($prefix, $event_raw, $required_data, $__EVENT_DEFAULT);
 
 	return $event;
 }

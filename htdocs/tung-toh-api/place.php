@@ -20,6 +20,7 @@ switch($_GET['method']){
 
 		$success_msg = "Add hai la!";
 		break;
+
 	case "edit":
 		access_check($GLOBALS['PLACE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
@@ -28,6 +29,7 @@ switch($_GET['method']){
 		
 		$success_msg = "Edit laew woi~";
 		break;
+
 	case "getall":
 		$getAll = true;
 	case "get":
@@ -37,7 +39,7 @@ switch($_GET['method']){
 			$getAll = false;
 		}
 
-		if(isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])){
+		if(screenData($_GET, [ "+int*" => "place_id" ])){
 			$rs = getPlace($_GET['place_id'], $getAll);
 		}
 		else{
@@ -46,10 +48,11 @@ switch($_GET['method']){
 
 		$success_msg = "Ow pai!";
 		break;
+
 	case "remove":
 		access_check($GLOBALS['PLACE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN']);
 
-		if(isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])){
+		if(screenData($_GET, [ "+int*" => "place_id" ])){
 			$rs = removePlace($_GET['place_id']);
 		}
 		else{
@@ -58,6 +61,7 @@ switch($_GET['method']){
 
 		$success_msg = "Lob la na jaa!";
 		break;
+		
 	default:
 		reject($GLOBALS['PLACE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Method KUY RAI SUS!!?!??!?");
 		break;

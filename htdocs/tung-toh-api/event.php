@@ -19,6 +19,7 @@ switch($_GET['method']){
 
 		$success_msg = "Add hai la!";
 		break;
+
 	case "edit":
 		access_check($GLOBALS['EVENT_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
@@ -27,6 +28,7 @@ switch($_GET['method']){
 		
 		$success_msg = "Edit laew woi~";
 		break;
+
 	case "edittable":
 		access_check($GLOBALS['EVENT_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
@@ -35,6 +37,7 @@ switch($_GET['method']){
 		
 		$success_msg = "Edit laew woi~";
 		break;
+
 	case "getall":
 		$getAll = true;
 	case "get":
@@ -44,10 +47,10 @@ switch($_GET['method']){
 			$getAll = false;
 		}
 
-		if(isset($_GET['event_id']) && isPositiveInt($_GET['event_id'])){
+		if(screenData($_GET, [ "+int*" => "event_id" ])){
 			$rs = getEvent($_GET['event_id'], $getAll);
 		}
-		elseif(isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])){
+		elseif(screenData($_GET, [ "+int*" => "place_id" ])){
 			$rs = getEventList($_GET['place_id'], $getAll);
 		}
 		else{
@@ -56,17 +59,18 @@ switch($_GET['method']){
 
 		$success_msg = "Ow pai!";
 		break;
+
 	case "gettable":
 		access_check($GLOBALS['EVENT_PREFIX']);
 
-		if(!isset($_GET['event_id']) || notPositiveInt($_GET['event_id'])){
+		if(!screenData($_GET, [ "+int*" => "event_id" ])){
 			reject($GLOBALS['EVENT_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Event ID mai mee ror?");
 		}
 
-		if(isset($_GET['table_id']) && isPositiveInt($_GET['table_id'])){
+		if(screenData($_GET, [ "+int*" => "table_id" ])){
 			$rs = getTable($_GET['table_id'], $_GET['event_id']);
 		}
-		elseif(isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])){
+		elseif(screenData($_GET, [ "+int*" => "map_id" ])){
 			$rs = getTableList($_GET['map_id'], $_GET['event_id']);
 		}
 		else{
@@ -78,10 +82,10 @@ switch($_GET['method']){
 	case "remove":
 		access_check($GLOBALS['EVENT_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN']);
 
-		if(isset($_GET['event_id']) && isPositiveInt($_GET['event_id'])){
+		if(screenData($_GET, [ "+int*" => "event_id" ])){
 			$rs = removeEvent($_GET['event_id']);
 		}
-		elseif(isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])){
+		elseif(screenData($_GET, [ "+int*" => "place_id" ])){
 			$rs = removeEventList($_GET['place_id']);
 		}
 		else{

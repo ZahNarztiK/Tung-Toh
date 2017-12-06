@@ -20,6 +20,7 @@ switch($_GET['method']){
 		
 		$success_msg = "Samuk dai la!";
 		break;
+
 	case "login":
 		$GLOBALS['MEMBER_PREFIX'] = $GLOBALS['LOGIN_PREFIX'];
 
@@ -28,6 +29,7 @@ switch($_GET['method']){
 
 		$success_msg = "Login dai la!";
 		break;
+
 	case "verifySession":
 		$GLOBALS['MEMBER_PREFIX'] = $GLOBALS['VERIFYSESSION_PREFIX'];
 
@@ -36,6 +38,7 @@ switch($_GET['method']){
 
 		$success_msg = "Login dai la!";
 		break;
+
 	case "logout":
 		$GLOBALS['MEMBER_PREFIX'] = $GLOBALS['LOGOUT_PREFIX'];
 
@@ -43,6 +46,7 @@ switch($_GET['method']){
 
 		$success_msg = "Session cleared!";
 		break;
+
 	case "forgetpwd":
 		$GLOBALS['MEMBER_PREFIX'] = $GLOBALS['FORGET_PREFIX'];
 
@@ -51,6 +55,7 @@ switch($_GET['method']){
 
 		$success_msg = "Arn mail duay";
 		break;
+
 	case "resetpwd":
 		$GLOBALS['MEMBER_PREFIX'] = $GLOBALS['RESETPWD_PREFIX'];
 		
@@ -59,6 +64,7 @@ switch($_GET['method']){
 
 		$success_msg = "Ahhhh yeahh~~~~";
 		break;
+		
 	default:
 		reject($GLOBALS['MEMBER_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Method KUY RAI SUS!!?!??!?");
 		break;
