@@ -8,22 +8,22 @@ require_once("../../inc/place_func.php");
 
 
 if(!isset($_GET['method'])){
-	reject($__PLACE_PREFIX, "04", "No method");
+	reject($GLOBALS['PLACE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "No method");
 }
 
 switch($_GET['method']){
 	case "add":
-		access_check($__PLACE_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
+		access_check($GLOBALS['PLACE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
-		$data = data_check($__PLACE_PREFIX);
+		$data = data_check($GLOBALS['PLACE_PREFIX']);
 		$rs = addPlace($data);
 
 		$success_msg = "Add hai la!";
 		break;
 	case "edit":
-		access_check($__PLACE_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
+		access_check($GLOBALS['PLACE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
-		$data = data_check($__PLACE_PREFIX);
+		$data = data_check($GLOBALS['PLACE_PREFIX']);
 		$rs = editPlace($data);
 		
 		$success_msg = "Edit laew woi~";
@@ -31,7 +31,7 @@ switch($_GET['method']){
 	case "getall":
 		$getAll = true;
 	case "get":
-		access_check($__PLACE_PREFIX);
+		access_check($GLOBALS['PLACE_PREFIX']);
 
 		if(!isset($getAll)){
 			$getAll = false;
@@ -41,29 +41,29 @@ switch($_GET['method']){
 			$rs = getPlace($_GET['place_id'], $getAll);
 		}
 		else{
-			reject($__PLACE_PREFIX, "04", "Place ID????");
+			reject($GLOBALS['PLACE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Place ID????");
 		}
 
 		$success_msg = "Ow pai!";
 		break;
 	case "remove":
-		access_check($__PLACE_PREFIX, $__ACCESS_CONSTANT['ADMIN']);
+		access_check($GLOBALS['PLACE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN']);
 
 		if(isset($_GET['place_id']) && isPositiveInt($_GET['place_id'])){
 			$rs = removePlace($_GET['place_id']);
 		}
 		else{
-			reject($__PLACE_PREFIX, "04", "Place ID????");
+			reject($GLOBALS['PLACE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Place ID????");
 		}
 
 		$success_msg = "Lob la na jaa!";
 		break;
 	default:
-		reject($__PLACE_PREFIX, "04", "Method KUY RAI SUS!!?!??!?");
+		reject($GLOBALS['PLACE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Method KUY RAI SUS!!?!??!?");
 		break;
 }
 
 set_response($rs);
-success($__PLACE_PREFIX, $success_msg);
+success($GLOBALS['PLACE_PREFIX'], $success_msg);
 
 ?>

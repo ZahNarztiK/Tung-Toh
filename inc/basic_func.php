@@ -23,7 +23,7 @@ function prepareJSON($prefix, $data, $default_data = [], $reject = true){
 	}
 	if(!is_array($data)){
 		if($reject){
-			reject($prefix, "04", "JSON Error");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['JSON'], "JSON Error");
 		}
 		else{
 			return null;

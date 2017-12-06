@@ -4,13 +4,12 @@ if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
 
-$__RESETPWD_PREFIX = "MP";
+$GLOBALS['RESETPWD_PREFIX'] = "MP";
 
 
 
 function resetPassword($resetpwd_raw){
-	global $__RESETPWD_PREFIX;
-	$prefix = $__RESETPWD_PREFIX;
+	$prefix = $GLOBALS['RESETPWD_PREFIX'];
 
 	init_send_response(0);
 
@@ -32,7 +31,7 @@ function resetPassword($resetpwd_raw){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "MAI HAI PLEAN WOI FUCKFUCKFUCK!!!!");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "MAI HAI PLEAN WOI FUCKFUCKFUCK!!!!");
 		}
 
 
@@ -62,25 +61,24 @@ function resetPassword($resetpwd_raw){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function resetPwd_infoCheck($resetpwd_raw){
-	global $__RESETPWD_PREFIX;
-	$prefix = $__RESETPWD_PREFIX;
+	$prefix = $GLOBALS['RESETPWD_PREFIX'];
 
 	$resetpwd = prepareJSON($prefix, $resetpwd_raw);
 
 	
 	if(!isset($resetpwd['email']) || !valid_email($resetpwd['email'])){
-		reject($prefix, "04", "Song email ma dd noi.");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Song email ma dd noi.");
 	}
 	if(!isset($resetpwd['code']) || $resetpwd['code'] == ""){
-		reject($prefix, "04", "Code la kub ai sas?");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Code la kub ai sas?");
 	}
 	if(isset($resetpwd['password']) && !valid_password($resetpwd['password'])){
-		reject($prefix, "04", "Password kak sus.");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Password kak sus.");
 	}
 
 

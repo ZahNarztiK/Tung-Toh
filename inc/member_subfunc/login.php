@@ -4,13 +4,12 @@ if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
 
-$__LOGIN_PREFIX = "ML";
+$GLOBALS['LOGIN_PREFIX'] = "ML";
 
 
 
 function login($login_raw){
-	global $__LOGIN_PREFIX;
-	$prefix = $__LOGIN_PREFIX;
+	$prefix = $GLOBALS['LOGIN_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -28,7 +27,7 @@ function login($login_raw){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Login pid, ai kuy!!!");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Login pid, ai kuy!!!");
 		}
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -45,27 +44,26 @@ function login($login_raw){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function login_infoCheck($login_raw){
-	global $__LOGIN_PREFIX;
-	$prefix = $__LOGIN_PREFIX;
+	$prefix = $GLOBALS['LOGIN_PREFIX'];
 
 	$login = prepareJSON($prefix, $login_raw);
 
 
 	if(!isset($login['email']) || !isset($login['password'])){
-		reject($prefix, "04", "Kor moon mai krob, ai kuy!!!");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Kor moon mai krob, ai kuy!!!");
 	}
 
 	if(!valid_email($login['email'])){
-		reject($prefix, "04", "Email pid, ai kwai");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Email pid, ai kwai");
 	}
 
 	if(!valid_password($login['password'])){
-		reject($prefix, "04", "Mai me pass, ai har");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Mai me pass, ai har");
 	}
 
 

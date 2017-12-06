@@ -10,7 +10,7 @@ require_once("../../inc/basic_func.php");
 require_once("../../inc/map_func.php");
 require_once("../../inc/table_func.php");
 
-$__PLACE_PREFIX = "IP";
+$GLOBALS['PLACE_PREFIX'] = "IP";
 $__PLACE_DEFAULT = [
 	"name" => "",
 	"latitude" => "",
@@ -23,8 +23,7 @@ $__PLACE_INFO_QUERY = "place_id, name, X(location) as latitude, Y(location) as l
 
 
 function addPlace($place_raw){
-	global $__PLACE_PREFIX;
-	$prefix = $__PLACE_PREFIX;
+	$prefix = $GLOBALS['PLACE_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -37,7 +36,7 @@ function addPlace($place_raw){
 		$stmt->execute();
 		
 		if($stmt->rowCount() > 0){
-			reject($prefix, "15", "Duplicated name.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_DUPLICATED'], "Duplicated name.");
 		}
 
 
@@ -51,7 +50,7 @@ function addPlace($place_raw){
 		
 		$place_id = $DB_PDO->lastInsertId();
 		if($place_id == 0){
-			reject($prefix, "19", "Place add failed.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], "Place add failed.");
 		}
 
 		$rs = [
@@ -61,13 +60,12 @@ function addPlace($place_raw){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function editPlace($place_raw){
-	global $__PLACE_PREFIX;
-	$prefix = $__PLACE_PREFIX;
+	$prefix = $GLOBALS['PLACE_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -80,7 +78,7 @@ function editPlace($place_raw){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Place not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Place not found.");
 		}
 
 
@@ -90,7 +88,7 @@ function editPlace($place_raw){
 		$stmt->execute();
 		
 		if($stmt->rowCount() > 0){
-			reject($prefix, "15", "Duplicated name.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_DUPLICATED'], "Duplicated name.");
 		}
 
 
@@ -111,13 +109,13 @@ function editPlace($place_raw){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function getPlace($place_id, $getAll = false, $event_id = null){
-	global $__PLACE_PREFIX, $__PLACE_INFO_QUERY;
-	$prefix = $__PLACE_PREFIX;
+	global $__PLACE_INFO_QUERY;
+	$prefix = $GLOBALS['PLACE_PREFIX'];
 
 	$is_event_param = isPositiveInt($event_id);
 
@@ -130,7 +128,7 @@ function getPlace($place_id, $getAll = false, $event_id = null){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Place not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Place not found.");
 		}
 
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -149,13 +147,12 @@ function getPlace($place_id, $getAll = false, $event_id = null){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function removePlace($place_id){
-	global $__PLACE_PREFIX;
-	$prefix = $__PLACE_PREFIX;
+	$prefix = $GLOBALS['PLACE_PREFIX'];
 
 	$map_deleted = removeMapList($place_id);
 	$event_deleted = removeEventList($place_id);
@@ -168,7 +165,7 @@ function removePlace($place_id){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Location not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Location not found.");
 		}
 		
 		$rs = [
@@ -180,15 +177,15 @@ function removePlace($place_id){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function preparePlaceData($place_raw, $isEdit = false){
-	global $__PLACE_PREFIX, $__PLACE_DEFAULT;
+	global $__PLACE_DEFAULT;
 
 	$error = [];
-	$prefix = $__PLACE_PREFIX;
+	$prefix = $GLOBALS['PLACE_PREFIX'];
 
 	$place = prepareJSON($prefix, $place_raw, $__PLACE_DEFAULT);
 
@@ -210,7 +207,7 @@ function preparePlaceData($place_raw, $isEdit = false){
 	}
 
 	if(!empty($error)){
-		reject($prefix, "04", "Error parameter(s) - ".implode(", ", $error));
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Error parameter(s) - ".implode(", ", $error));
 	}
 
 

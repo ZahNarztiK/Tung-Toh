@@ -6,6 +6,7 @@ AccessDenied:
 X4: No data
 
 PHP-FrontEnd: 01-09
+	JSON Error: 03
 	Info Missing/Error: 04
 DB, SQL: 11-19
 	PDO error: 10

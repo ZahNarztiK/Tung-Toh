@@ -7,22 +7,22 @@ require_once("../../inc/access_func.php");
 require_once("../../inc/map_func.php");
 
 if(!isset($_GET['method'])){
-	reject($__MAP_PREFIX, "04", "No method");
+	reject($GLOBALS['MAP_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "No method");
 }
 
 switch($_GET['method']){
 	case "add":
-		access_check($__MAP_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
+		access_check($GLOBALS['MAP_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
-		$data = data_check($__MAP_PREFIX);
+		$data = data_check($GLOBALS['MAP_PREFIX']);
 		$rs = addMap($data);
 
 		$success_msg = "Add hai la!";
 		break;
 	case "edit":
-		access_check($__MAP_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
+		access_check($GLOBALS['MAP_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
-		$data = data_check($__MAP_PREFIX);
+		$data = data_check($GLOBALS['MAP_PREFIX']);
 		$rs = editMap($data);
 		
 		$success_msg = "Edit laew woi~";
@@ -30,7 +30,7 @@ switch($_GET['method']){
 	case "getall":
 		$getAll = true;
 	case "get":
-		access_check($__MAP_PREFIX);
+		access_check($GLOBALS['MAP_PREFIX']);
 
 		if(!isset($getAll)){
 			$getAll = false;
@@ -43,13 +43,13 @@ switch($_GET['method']){
 			$rs = getMapList($_GET['place_id'], $getAll);
 		}
 		else{
-			reject($__MAP_PREFIX, "04", "Map/Place ID????");
+			reject($GLOBALS['MAP_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Map/Place ID????");
 		}
 
 		$success_msg = "Ow pai!";
 		break;
 	case "remove":
-		access_check($__MAP_PREFIX, $__ACCESS_CONSTANT['ADMIN']);
+		access_check($GLOBALS['MAP_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN']);
 
 		if(isset($_GET['map_id']) && isPositiveInt($_GET['map_id'])){
 			$rs = removeMap($_GET['map_id']);
@@ -58,17 +58,17 @@ switch($_GET['method']){
 			$rs = removeMapList($_GET['place_id']);
 		}
 		else{
-			reject($__MAP_PREFIX, "04", "Map/Place ID????");
+			reject($GLOBALS['MAP_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Map/Place ID????");
 		}
 
 		$success_msg = "Lob la na jaa!";
 		break;
 	default:
-		reject($__MAP_PREFIX, "04", "Method KUY RAI SUS!!?!??!?");
+		reject($GLOBALS['MAP_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Method KUY RAI SUS!!?!??!?");
 		break;
 }
 
 set_response($rs);
-success($__MAP_PREFIX, $success_msg);
+success($GLOBALS['MAP_PREFIX'], $success_msg);
 
 ?>

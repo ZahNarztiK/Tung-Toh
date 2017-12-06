@@ -10,7 +10,7 @@ if(!isset($_SESSION)){
 require_once("../../inc/init_response_func.php");
 require_once("../../inc/basic_func.php");
 
-$__ACCESS_CONSTANT = [
+$GLOBALS['ACCESS_CONSTANT'] = [
 	"LOGGEDIN" => 0,
 	"VERIFIED" => 1,
 	"ADMIN" => 9
@@ -18,10 +18,10 @@ $__ACCESS_CONSTANT = [
 
 function access_check($prefix, $previlege = 0, $DataRequired = false){
 	if(!isset($_SESSION['verified'])){
-		reject($prefix, "99", "Login gon ai sus!!!");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['AC_LOGGED'], "Login gon ai sus!!!");
 	}
 	if($_SESSION['verified'] < $previlege){
-		reject($prefix, "90", "Access denied, eiei olo.");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['AC_LOW'], "Access denied, eiei olo.");
 	}
 	if($DataRequired){
 		return data_check($prefix);
@@ -32,7 +32,7 @@ function data_check($prefix){
 	$data = prepareJSON($prefix, file_get_contents("php://input"));
 	
 	if(empty($data)){
-		reject($prefix, "04", "No data KUYKUYKUYKUY!!!");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "No data KUYKUYKUYKUY!!!");
 	}
 
 	return $data;

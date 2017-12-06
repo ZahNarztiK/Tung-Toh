@@ -8,20 +8,20 @@ require_once("../../inc/profile_func.php");
 
 
 if(!isset($_GET['method'])){
-	reject($__PROFILE_PREFIX, "04", "No method");
+	reject($GLOBALS['PROFILE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "No method");
 }
 
 switch($_GET['method']){
 	case "edit":
-		access_check($__PROFILE_PREFIX, $__ACCESS_CONSTANT['LOGGEDIN'], true);
+		access_check($GLOBALS['PROFILE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['LOGGEDIN'], true);
 
-		$data = data_check($__PROFILE_PREFIX);
+		$data = data_check($GLOBALS['PROFILE_PREFIX']);
 		$rs = editProfile($data);
 		
 		$success_msg = "Edit laew woi~";
 		break;
 	case "get":
-		access_check($__PROFILE_PREFIX);
+		access_check($GLOBALS['PROFILE_PREFIX']);
 
 		$member_id = $_SESSION['member_id'];
 		if(isset($_GET['member_id']) && isPositiveInt($_GET['member_id'])){
@@ -33,10 +33,10 @@ switch($_GET['method']){
 		$success_msg = "Ow pai!";
 		break;
 	//case "remove":
-	//	access_check($__PROFILE_PREFIX, $__ACCESS_CONSTANT['ADMIN']);
+	//	access_check($GLOBALS['PROFILE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN']);
 
 	//	if(!isset($_GET['member_id']) || is_nan($_GET['member_id']) || $_GET['member_id'] <= 0){
-	//		reject($__PROFILE_PREFIX, "04", "Member ID????");
+	//		reject($GLOBALS['PROFILE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Member ID????");
 	//	}
 
 	//	$rs = removeProfile($_GET['member_id']);
@@ -44,11 +44,11 @@ switch($_GET['method']){
 	//	$success_msg = "Lob la na jaa!";
 	//	break;
 	default:
-		reject($__PROFILE_PREFIX, "04", "Method KUY RAI SUS!!?!??!?");
+		reject($GLOBALS['PROFILE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Method KUY RAI SUS!!?!??!?");
 		break;
 }
 
 set_response($rs);
-success($__PROFILE_PREFIX, $success_msg);
+success($GLOBALS['PROFILE_PREFIX'], $success_msg);
 
 ?>

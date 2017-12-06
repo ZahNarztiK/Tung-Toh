@@ -19,6 +19,9 @@ require_once("../../inc/member_subfunc/logout.php");
 require_once("../../inc/member_subfunc/forgetPassword.php");
 require_once("../../inc/member_subfunc/resetPassword.php");
 
+$__MEMBER_DEFAULT_PREFIX = "MX";
+$GLOBALS['MEMBER_PREFIX'] = $__MEMBER_DEFAULT_PREFIX;
+
 
 function init_login_response(){
 	set_response([

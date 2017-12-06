@@ -9,7 +9,7 @@ require_once("../../inc/init_response_func.php");
 require_once("../../inc/basic_func.php");
 require_once("../../inc/table_func.php");
 
-$__MAP_PREFIX = "IM";
+$GLOBALS['MAP_PREFIX'] = "IM";
 $__MAP_DEFAULT = [
 	//"width" => 0,
 	//"height" => 0,
@@ -22,8 +22,7 @@ $__MAP_INFO_QUERY = "map_id, place_id, width, height, name, info, bg_image";
 
 
 function addMap($map_raw){
-	global $__MAP_PREFIX;
-	$prefix = $__MAP_PREFIX;
+	$prefix = $GLOBALS['MAP_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -36,7 +35,7 @@ function addMap($map_raw){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Location not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Location not found.");
 		}
 
 
@@ -51,7 +50,7 @@ function addMap($map_raw){
 		
 		$map_id = $DB_PDO->lastInsertId();
 		if($map_id == 0){
-			reject($prefix, "19", "Map add failed.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], "Map add failed.");
 		}
 
 		$rs = [
@@ -61,13 +60,12 @@ function addMap($map_raw){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function editMap($map_raw){
-	global $__MAP_PREFIX;
-	$prefix = $__MAP_PREFIX;
+	$prefix = $GLOBALS['MAP_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -80,7 +78,7 @@ function editMap($map_raw){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Map not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Map not found.");
 		}
 
 
@@ -101,13 +99,13 @@ function editMap($map_raw){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function getMap($map_id, $getAll = false, $event_id = null){
-	global $__MAP_PREFIX, $__MAP_INFO_QUERY;
-	$prefix = $__MAP_PREFIX;
+	global $__MAP_INFO_QUERY;
+	$prefix = $GLOBALS['MAP_PREFIX'];
 
 	$is_event_param = isPositiveInt($event_id);
 
@@ -120,7 +118,7 @@ function getMap($map_id, $getAll = false, $event_id = null){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Map not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Map not found.");
 		}
 		
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -139,13 +137,13 @@ function getMap($map_id, $getAll = false, $event_id = null){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function getMapList($place_id, $getAll = false, $event_id = null){
-	global $__MAP_PREFIX, $__MAP_INFO_QUERY;
-	$prefix = $__MAP_PREFIX;
+	global $__MAP_INFO_QUERY;
+	$prefix = $GLOBALS['MAP_PREFIX'];
 
 	$is_event_param = isPositiveInt($event_id);
 
@@ -157,7 +155,7 @@ function getMapList($place_id, $getAll = false, $event_id = null){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Location not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Location not found.");
 		}
 
 
@@ -191,13 +189,12 @@ function getMapList($place_id, $getAll = false, $event_id = null){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function removeMap($map_id){
-	global $__MAP_PREFIX;
-	$prefix = $__MAP_PREFIX;
+	$prefix = $GLOBALS['MAP_PREFIX'];
 
 	$table_deleted = removeTableList("map_id", $map_id);
 
@@ -209,7 +206,7 @@ function removeMap($map_id){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Map not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Map not found.");
 		}
 		
 		$rs = [
@@ -220,13 +217,12 @@ function removeMap($map_id){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function removeMapList($place_id){
-	global $__MAP_PREFIX;
-	$prefix = $__MAP_PREFIX;
+	$prefix = $GLOBALS['MAP_PREFIX'];
 
 	$table_deleted = removeTableList("place_id", $place_id);
 
@@ -246,15 +242,15 @@ function removeMapList($place_id){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function prepareMapData($map_raw, $isEdit = false){
-	global $__MAP_PREFIX, $__MAP_DEFAULT;
+	global $__MAP_DEFAULT;
 
 	$error = [];
-	$prefix = $__MAP_PREFIX;
+	$prefix = $GLOBALS['MAP_PREFIX'];
 
 	$map = prepareJSON($prefix, $map_raw, $__MAP_DEFAULT);
 
@@ -273,7 +269,7 @@ function prepareMapData($map_raw, $isEdit = false){
 	}
 
 	if(!empty($error)){
-		reject($prefix, "04", "Error parameter(s) - ".implode(", ", $error));
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Error parameter(s) - ".implode(", ", $error));
 	}
 
 

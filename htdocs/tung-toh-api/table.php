@@ -7,28 +7,28 @@ require_once("../../inc/access_func.php");
 require_once("../../inc/table_func.php");
 
 if(!isset($_GET['method'])){
-	reject($__TABLE_PREFIX, "04", "No method");
+	reject($GLOBALS['TABLE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "No method");
 }
 
 switch($_GET['method']){
 	case "add":
-		access_check($__TABLE_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
+		access_check($GLOBALS['TABLE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
-		$data = data_check($__TABLE_PREFIX);
+		$data = data_check($GLOBALS['TABLE_PREFIX']);
 		$rs = addTable($data);
 
 		$success_msg = "Add hai la!";
 		break;
 	case "edit":
-		access_check($__TABLE_PREFIX, $__ACCESS_CONSTANT['ADMIN'], true);
+		access_check($GLOBALS['TABLE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
-		$data = data_check($__TABLE_PREFIX);
+		$data = data_check($GLOBALS['TABLE_PREFIX']);
 		$rs = editTable($data);
 		
 		$success_msg = "Edit laew woi~";
 		break;
 	case "get":
-		access_check($__TABLE_PREFIX);
+		access_check($GLOBALS['TABLE_PREFIX']);
 
 		if(isset($_GET['table_id']) && isPositiveInt($_GET['table_id'])){
 			$rs = getTable($_GET['table_id']);
@@ -37,13 +37,13 @@ switch($_GET['method']){
 			$rs = getTableList($_GET['map_id']);
 		}
 		else{
-			reject($__TABLE_PREFIX, "04", "Table/Map ID????");
+			reject($GLOBALS['TABLE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Table/Map ID????");
 		}
 
 		$success_msg = "Ow pai!";
 		break;
 	case "remove":
-		access_check($__TABLE_PREFIX, $__ACCESS_CONSTANT['ADMIN']);
+		access_check($GLOBALS['TABLE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN']);
 
 		if(isset($_GET['table_id']) && isPositiveInt($_GET['table_id'])){
 			$rs = removeTable($_GET['table_id']);
@@ -55,17 +55,17 @@ switch($_GET['method']){
 			$rs = removeTableList("place_id", $_GET['place_id']);
 		}
 		else{
-			reject($__TABLE_PREFIX, "04", "Table/Map ID/Place ID????");
+			reject($GLOBALS['TABLE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Table/Map ID/Place ID????");
 		}
 
 		$success_msg = "Lob la na jaa!";
 		break;
 	default:
-		reject($__TABLE_PREFIX, "04", "Method KUY RAI SUS!!?!??!?");
+		reject($GLOBALS['TABLE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Method KUY RAI SUS!!?!??!?");
 		break;
 }
 
 set_response($rs);
-success($__TABLE_PREFIX, $success_msg);
+success($GLOBALS['TABLE_PREFIX'], $success_msg);
 
 ?>

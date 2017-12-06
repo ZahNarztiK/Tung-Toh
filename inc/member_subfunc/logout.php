@@ -4,7 +4,7 @@ if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
 
-$__LOGOUT_PREFIX = "ML";
+$GLOBALS['LOGOUT_PREFIX'] = "ML";
 
 
 function logout(){

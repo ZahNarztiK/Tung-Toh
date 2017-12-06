@@ -11,7 +11,7 @@ require_once("../../inc/place_func.php");
 require_once("../../inc/map_func.php");
 require_once("../../inc/table_func.php");
 
-$__EVENT_PREFIX = "IE";
+$GLOBALS['EVENT_PREFIX'] = "IE";
 $__EVENT_DEFAULT = [
 	"name" => "",
 	"info" => "",
@@ -23,8 +23,7 @@ $__EVENT_INFO_QUERY = "event_id, name, place_id, date, info, image, active";
 
 
 function addEvent($event_raw){
-	global $__EVENT_PREFIX;
-	$prefix = $__EVENT_PREFIX;
+	$prefix = $GLOBALS['EVENT_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -37,7 +36,7 @@ function addEvent($event_raw){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Location not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Location not found.");
 		}
 
 
@@ -51,7 +50,7 @@ function addEvent($event_raw){
 		
 		$event_id = $DB_PDO->lastInsertId();
 		if($event_id == 0){
-			reject($prefix, "19", "Event add failed.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], "Event add failed.");
 		}
 
 		setupTableToEvent($event_id, $event['place_id']);
@@ -63,13 +62,12 @@ function addEvent($event_raw){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function editEvent($event_raw){
-	global $__EVENT_PREFIX;
-	$prefix = $__EVENT_PREFIX;
+	$prefix = $GLOBALS['EVENT_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -82,7 +80,7 @@ function editEvent($event_raw){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Event not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Event not found.");
 		}
 
 
@@ -103,13 +101,13 @@ function editEvent($event_raw){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function getEvent($event_id, $getAll = false){
-	global $__EVENT_PREFIX, $__EVENT_INFO_QUERY;
-	$prefix = $__EVENT_PREFIX;
+	global $__EVENT_INFO_QUERY;
+	$prefix = $GLOBALS['EVENT_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -120,7 +118,7 @@ function getEvent($event_id, $getAll = false){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Event not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Event not found.");
 		}
 
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -135,13 +133,13 @@ function getEvent($event_id, $getAll = false){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function getEventList($place_id, $getAll = false){
-	global $__EVENT_PREFIX, $__EVENT_INFO_QUERY;
-	$prefix = $__EVENT_PREFIX;
+	global $__EVENT_INFO_QUERY;
+	$prefix = $GLOBALS['EVENT_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -152,7 +150,7 @@ function getEventList($place_id, $getAll = false){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Location not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Location not found.");
 		}
 
 
@@ -181,13 +179,12 @@ function getEventList($place_id, $getAll = false){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function removeEvent($event_id){
-	global $__EVENT_PREFIX;
-	$prefix = $__EVENT_PREFIX;
+	$prefix = $GLOBALS['EVENT_PREFIX'];
 
 	$table_booking_deleted = removeTableList("event_id", $event_id);
 
@@ -200,7 +197,7 @@ function removeEvent($event_id){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Event not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Event not found.");
 		}
 		
 		$rs = [
@@ -211,13 +208,12 @@ function removeEvent($event_id){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function removeEventList($place_id){
-	global $__EVENT_PREFIX;
-	$prefix = $__EVENT_PREFIX;
+	$prefix = $GLOBALS['EVENT_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -246,15 +242,15 @@ function removeEventList($place_id){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function prepareEventData($event_raw, $isEdit = false){
-	global $__EVENT_PREFIX, $__EVENT_DEFAULT;
+	global $__EVENT_DEFAULT;
 
 	$error = [];
-	$prefix = $__EVENT_PREFIX;
+	$prefix = $GLOBALS['EVENT_PREFIX'];
 
 	$event = prepareJSON($prefix, $event_raw, $__EVENT_DEFAULT);
 
@@ -275,7 +271,7 @@ function prepareEventData($event_raw, $isEdit = false){
 	$event['date'] = date("Y-m-d H:i:s", $event['date']);
 
 	if(!empty($error)){
-		reject($prefix, "04", "Error parameter(s) - ".implode(", ", $error));
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Error parameter(s) - ".implode(", ", $error));
 	}
 
 

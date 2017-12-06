@@ -8,7 +8,7 @@ require_once("../../inc/db_connect.php");
 require_once("../../inc/init_response_func.php");
 require_once("../../inc/access_func.php");
 
-$__PROFILE_PREFIX = "IU";
+$GLOBALS['PROFILE_PREFIX'] = "IU";
 $__PROFILE_DEFAULT = [
 	"firstname" => "",
 	"lastname" => "",
@@ -20,8 +20,7 @@ $__PROFILE_INFO_QUERY = "email, verified, firstname, lastname, tel, level, point
 
 
 function editProfile($profile_raw){
-	global $__PROFILE_PREFIX;
-	$prefix = $__PROFILE_PREFIX;
+	$prefix = $GLOBALS['PROFILE_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -37,7 +36,7 @@ function editProfile($profile_raw){
 		$stmt->execute();
 
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Member not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Member not found.");
 		}
 
 
@@ -57,13 +56,13 @@ function editProfile($profile_raw){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function getProfile($member_id){
-	global $__PROFILE_PREFIX, $__PROFILE_INFO_QUERY;
-	$prefix = $__PROFILE_PREFIX;
+	global $__PROFILE_INFO_QUERY;
+	$prefix = $GLOBALS['PROFILE_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -77,7 +76,7 @@ function getProfile($member_id){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "No info.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "No info.");
 		}
 
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -85,23 +84,21 @@ function getProfile($member_id){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function checkProfileAccess($member_id){
-	global $__PROFILE_PREFIX, $__ACCESS_CONSTANT;
-
-	if($_SESSION['verified'] < $__ACCESS_CONSTANT['ADMIN']  && $_SESSION['member_id'] != $member_id){
-		reject($__PROFILE_PREFIX, "90", "Not yours. olo");
+	if($_SESSION['verified'] < $GLOBALS['ACCESS_CONSTANT']['ADMIN']  && $_SESSION['member_id'] != $member_id){
+		reject($GLOBALS['PROFILE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['AC_LOW'], "Not yours. olo");
 	}
 }
 
 function prepareProfileData($profile_raw, $isEdit = false){
-	global $__PROFILE_PREFIX, $__PROFILE_DEFAULT;
+	global $__PROFILE_DEFAULT;
 
 	$error = [];
-	$prefix = $__PROFILE_PREFIX;
+	$prefix = $GLOBALS['PROFILE_PREFIX'];
 
 	$profile = prepareJSON($prefix, $profile_raw, $__PROFILE_DEFAULT);
 
@@ -111,7 +108,7 @@ function prepareProfileData($profile_raw, $isEdit = false){
 	}
 
 	if(!empty($error)){
-		reject($prefix, "04", "Error parameter(s) - ".implode(", ", $error));
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Error parameter(s) - ".implode(", ", $error));
 	}
 
 

@@ -10,7 +10,7 @@ require_once("../../inc/basic_func.php");
 require_once("../../inc/map_func.php");
 require_once("../../inc/event_func.php");
 
-$__TABLE_PREFIX = "IT";
+$GLOBALS['TABLE_PREFIX'] = "IT";
 $__TABLE_DEFAULT = [
 	"code" => "",
 	"x" => 0,
@@ -29,8 +29,7 @@ $__TABLE_QUERY['event_info'] =
 
 
 function addTable($table_raw){
-	global $__TABLE_PREFIX;
-	$prefix = $__TABLE_PREFIX;
+	$prefix = $GLOBALS['TABLE_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -43,7 +42,7 @@ function addTable($table_raw){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Location not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Location not found.");
 		}
 		$table['place_id'] = $stmt->fetchColumn();
 
@@ -54,7 +53,7 @@ function addTable($table_raw){
 		$stmt->execute();
 		
 		if($stmt->rowCount() > 0){
-			reject($prefix, "15", "Duplicated table code.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_DUPLICATED'], "Duplicated table code.");
 		}
 
 
@@ -70,7 +69,7 @@ function addTable($table_raw){
 		
 		$table_id = $DB_PDO->lastInsertId();
 		if($table_id == 0){
-			reject($prefix, "19", "Table add failed.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], "Table add failed.");
 		}
 
 		$rs = [
@@ -80,13 +79,12 @@ function addTable($table_raw){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function editTable($table_raw, $event_id = null, $event_id_data = false){
-	global $__TABLE_PREFIX, $__EVENT_PREFIX;
-	$prefix = $__TABLE_PREFIX;
+	$prefix = $GLOBALS['TABLE_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -97,7 +95,7 @@ function editTable($table_raw, $event_id = null, $event_id_data = false){
 		if($event_id_data){
 			$is_event_param = ((isset($table['event_id']) && isPositiveInt($table['event_id'])));
 			if(!$is_event_param){
-				reject($__EVENT_PREFIX, "04", "Event ID KAK KAK");
+				reject($GLOBALS['EVENT_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Event ID KAK KAK");
 			}
 			$event_id = $table['event_id'];
 		}
@@ -123,7 +121,7 @@ function editTable($table_raw, $event_id = null, $event_id_data = false){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Table not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Table not found.");
 		}
 		$table['map_id'] = $stmt->fetchColumn();
 
@@ -138,7 +136,7 @@ function editTable($table_raw, $event_id = null, $event_id_data = false){
 		$stmt->execute();
 		
 		if($stmt->rowCount() > 0){
-			reject($prefix, "15", "Duplicated table code.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_DUPLICATED'], "Duplicated table code.");
 		}
 
 
@@ -165,13 +163,13 @@ function editTable($table_raw, $event_id = null, $event_id_data = false){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function getTable($table_id, $event_id = null){
-	global $__TABLE_PREFIX, $__TABLE_QUERY;
-	$prefix = $__TABLE_PREFIX;
+	global  $__TABLE_QUERY;
+	$prefix = $GLOBALS['TABLE_PREFIX'];
 	$query = $__TABLE_QUERY['info'];
 
 	$is_event_param = isPositiveInt($event_id);
@@ -192,7 +190,7 @@ function getTable($table_id, $event_id = null){
 			$stmt->execute();
 
 			if($stmt->rowCount() == 0){
-				reject($prefix, "14", "Event not found.");
+				reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Event not found.");
 			}
 		}
 
@@ -202,7 +200,7 @@ function getTable($table_id, $event_id = null){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Table not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Table not found.");
 		}
 		
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -210,13 +208,13 @@ function getTable($table_id, $event_id = null){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function getTableList($map_id, $event_id = null){
-	global $__TABLE_PREFIX, $__TABLE_QUERY;
-	$prefix = $__TABLE_PREFIX;
+	global $__TABLE_QUERY;
+	$prefix = $GLOBALS['TABLE_PREFIX'];
 
 	$is_event_param = isPositiveInt($event_id);
 	if($is_event_param){
@@ -245,7 +243,7 @@ function getTableList($map_id, $event_id = null){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "$main_key not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "$main_key not found.");
 		}
 
 
@@ -264,13 +262,12 @@ function getTableList($map_id, $event_id = null){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function removeTable($table_id){
-	global $__TABLE_PREFIX;
-	$prefix = $__TABLE_PREFIX;
+	$prefix = $GLOBALS['TABLE_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -280,7 +277,7 @@ function removeTable($table_id){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Table not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Table not found.");
 		}
 		
 		$rs = [
@@ -290,17 +287,16 @@ function removeTable($table_id){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function removeTableList($identifier, $identifier_id){
-	global $__TABLE_PREFIX;
-	$prefix = $__TABLE_PREFIX;
+	$prefix = $GLOBALS['TABLE_PREFIX'];
 	$identifier_list = ["map_id", "place_id", "event_id"];
 
 	if(!in_array($identifier, $identifier_list) || notPositiveInt($identifier_id)){
-		reject($prefix, "09", "Identifier error.");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PHP'], "Identifier error.");
 	}
 
 	$is_event_param = ($identifier == "event_id");
@@ -327,13 +323,13 @@ function removeTableList($identifier, $identifier_id){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function setupTableToEvent($event_id, $place_id){
-	global $__TABLE_PREFIX, $__TABLE_QUERY;
-	$prefix = $__TABLE_PREFIX;
+	global $__TABLE_QUERY;
+	$prefix = $GLOBALS['TABLE_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -344,7 +340,7 @@ function setupTableToEvent($event_id, $place_id){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "Map not found.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Map not found.");
 		}
 		$map_ids = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 
@@ -366,15 +362,15 @@ function setupTableToEvent($event_id, $place_id){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function prepareTableData($table_raw, $isEdit = false, $reject = true){
-	global $__TABLE_PREFIX, $__TABLE_DEFAULT;
+	global $__TABLE_DEFAULT;
 
 	$error = [];
-	$prefix = $__TABLE_PREFIX;
+	$prefix = $GLOBALS['TABLE_PREFIX'];
 
 	$table = prepareJSON($prefix, $table_raw, $__TABLE_DEFAULT, $reject);
 
@@ -392,7 +388,7 @@ function prepareTableData($table_raw, $isEdit = false, $reject = true){
 
 	if(!empty($error)){
 		if($reject){
-			reject($prefix, "04", "Error parameter(s) - ".implode(", ", $error));
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Error parameter(s) - ".implode(", ", $error));
 		}
 		else{
 			return null;

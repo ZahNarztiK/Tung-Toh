@@ -4,13 +4,12 @@ if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
 
-$__VERIFYSESSION_PREFIX = "MS";
+$GLOBALS['VERIFYSESSION_PREFIX'] = "MS";
 
 
 
 function verifySession($session_raw){
-	global $__VERIFYSESSION_PREFIX;
-	$prefix = $__VERIFYSESSION_PREFIX;
+	$prefix = $GLOBALS['VERIFYSESSION_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -26,7 +25,7 @@ function verifySession($session_raw){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "11", "Login session pid, ai kuy!!!");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Login session pid, ai kuy!!!");
 		}
 		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
 		$rs['session_id'] = $session_id;
@@ -35,19 +34,18 @@ function verifySession($session_raw){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function verifySession_infoCheck($session_raw){
-	global $__VERIFYSESSION_PREFIX;
-	$prefix = $__VERIFYSESSION_PREFIX;
+	$prefix = $GLOBALS['VERIFYSESSION_PREFIX'];
 
 	$session = prepareJSON($prefix, $session_raw);
 
 
 	if(!isset($session['session_id'])){
-		reject($prefix, "04", "Session la', ai juy??");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Session la', ai juy??");
 	}
 
 

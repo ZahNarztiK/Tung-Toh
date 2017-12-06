@@ -8,7 +8,7 @@ require_once("../../inc/PHPMailer/init_PHPMailer.php");
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-$__FORGET_PREFIX = "MF";
+$GLOBALS['FORGET_PREFIX'] = "MF";
 
 $__FORGET_EMAIL = [
 	"mode" => "ncp",
@@ -35,8 +35,8 @@ $__FORGET_SMS = [];
 
 
 function forgetPassword($forgetpwd_raw){
-	global $__FORGET_PREFIX, $__FORGET_EMAIL;
-	$prefix = $__FORGET_PREFIX;
+	global $__FORGET_EMAIL;
+	$prefix = $GLOBALS['FORGET_PREFIX'];
 
 	init_send_response();
 
@@ -54,7 +54,7 @@ function forgetPassword($forgetpwd_raw){
 		$stmt->execute();
 		
 		if($stmt->rowCount() == 0){
-			reject($prefix, "14", "MAI MEE EMAIL NEE WOIII, kuy eiei!!!");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "MAI MEE EMAIL NEE WOIII, kuy eiei!!!");
 		}
 		$info = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -73,7 +73,7 @@ function forgetPassword($forgetpwd_raw){
 		$stmt->execute();
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 
 
@@ -138,7 +138,7 @@ function forgetPassword($forgetpwd_raw){
 		$status = $mail->send();
 
 		if(!$status){
-			reject($prefix, "19", $mail->ErrorInfo);
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], $mail->ErrorInfo);
 		}
 
 		$rs = [
@@ -147,21 +147,20 @@ function forgetPassword($forgetpwd_raw){
 
 		return $rs;
 	}catch(Exception $e){
-		reject($prefix, "19", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], $e->getMessage());
 	}catch(\Exception $e){
-		reject($prefix, "19", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], $e->getMessage());
 	}
 }
 
 function forget_infoCheck($forgetpwd_raw){
-	global $__FORGET_PREFIX;
-	$prefix = $__FORGET_PREFIX;
+	$prefix = $GLOBALS['FORGET_PREFIX'];
 
 	$forgetpwd = prepareJSON($prefix, $forgetpwd_raw);
 
 
 	if(!isset($forgetpwd['email']) || !valid_email($forgetpwd['email'])){
-		reject($prefix, "04", "Song email ma dd noi.");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Song email ma dd noi.");
 	}
 
 

@@ -4,13 +4,12 @@ if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
 
-$__REGISTER_PREFIX = "MR";
+$GLOBALS['REGISTER_PREFIX'] = "MR";
 
 
 
 function add_member($member_raw){
-	global $__REGISTER_PREFIX;
-	$prefix = $__REGISTER_PREFIX;
+	$prefix = $GLOBALS['REGISTER_PREFIX'];
 
 	try{
 		global $DB_PDO;
@@ -27,7 +26,7 @@ function add_member($member_raw){
 		$stmt->execute();
 
 		if($stmt->rowCount() > 0){
-			reject($prefix, "15", "Mee samak ma laew wa' sorry ;p");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_DUPLICATED'], "Mee samak ma laew wa' sorry ;p");
 		}
 
 
@@ -40,7 +39,7 @@ function add_member($member_raw){
 
 		$member_id = $DB_PDO->lastInsertId();
 		if($member_id == 0){
-			reject($prefix, "19", "Registration failed.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], "Registration failed.");
 		}
 		
 
@@ -55,27 +54,26 @@ function add_member($member_raw){
 		return $rs;
 	}
 	catch(PDOException $e){
-		reject($prefix, "10", $e->getMessage());
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
 }
 
 function register_infoCheck($member_raw){
-	global $__REGISTER_PREFIX;
-	$prefix = $__REGISTER_PREFIX;
+	$prefix = $GLOBALS['REGISTER_PREFIX'];
 
 	$member = prepareJSON($prefix, $member_raw);
 
 
 	if(!isset($member['email']) || !isset($member['password'])){
-		reject($prefix, "04", "Kor moon mai krob, ai kuy!!!");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Kor moon mai krob, ai kuy!!!");
 	}
 
 	if(!valid_email($member['email'])){
-		reject($prefix, "04", "Email pid, ai kwai");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Email pid, ai kwai");
 	}
 
 	if(!valid_password($member['password'])){
-		reject($prefix, "04", "Mai me pass, ai har");
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Mai me pass, ai har");
 	}
 
 
