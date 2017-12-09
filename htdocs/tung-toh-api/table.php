@@ -3,7 +3,7 @@
 session_start();
 
 $_IN_SITE = true;
-require_once("../../inc/access_func.php");
+require_once("../../inc/basic_func.php");
 require_once("../../inc/table_func.php");
 
 $prefix = $GLOBALS['TABLE_PREFIX'];
@@ -14,18 +14,16 @@ if(!isset($_GET['method'])){
 
 switch($_GET['method']){
 	case "add":
-		access_check($prefix, $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
+		$data = access_check($prefix, $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
-		$data = data_check($prefix);
 		$rs = addTable($data);
 
 		$success_msg = "Add hai la!";
 		break;
 		
 	case "edit":
-		access_check($prefix, $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
+		$data = access_check($prefix, $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
-		$data = data_check($prefix);
 		$rs = editTable($data);
 		
 		$success_msg = "Edit laew woi~";

@@ -4,9 +4,7 @@ if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
 
-require_once("../../inc/db_connect.php");
-require_once("../../inc/init_response_func.php");
-require_once("../../inc/access_func.php");
+require_once("../../inc/basic_func.php");
 
 $GLOBALS['PROFILE_PREFIX'] = "IU";
 $__PROFILE_DEFAULT = [
@@ -15,17 +13,25 @@ $__PROFILE_DEFAULT = [
 	"tel" => "",
 	"profile_image" => ""
 ];
+$__PROFILE_DATA_REQUIRED = [
+	"editProfile" => [
+		"+int*" => [ "member_id" ],
+		"str*" => [ "name" ],
+		"str" => [ "firstname", "lastname", "tel", "profile_image" ]
+	]
+];
 $__PROFILE_INFO_QUERY = "email, verified, firstname, lastname, tel, level, points, profile_image";
 
 
 
 function editProfile($profile_raw){
+	global $__PROFILE_DEFAULT, $__PROFILE_DATA_REQUIRED;
 	$prefix = $GLOBALS['PROFILE_PREFIX'];
 
 	try{
 		global $DB_PDO;
 		
-		$profile = prepareProfileData($profile_raw, true);
+		$profile = prepareJSON($prefix, $profile_raw, $__PROFILE_DATA_REQUIRED['editProfile'], $__PROFILE_DEFAULT);
 
 
 		checkProfileAccess($profile['member_id']);
@@ -92,23 +98,6 @@ function checkProfileAccess($member_id){
 	if($_SESSION['verified'] < $GLOBALS['ACCESS_CONSTANT']['ADMIN']  && $_SESSION['member_id'] != $member_id){
 		reject($GLOBALS['PROFILE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['AC_LOW'], "Not yours. olo");
 	}
-}
-
-function prepareProfileData($profile_raw, $isEdit = false){
-	global $__PROFILE_DEFAULT;
-	$prefix = $GLOBALS['PROFILE_PREFIX'];
-
-	$required_data = [
-		"str*" => [ "name" ],
-		"str" => [ "firstname", "lastname", "tel", "profile_image" ]
-	];
-	if($isEdit){
-		$required_data = [ "+int*" => [ "member_id" ] ] + $required_data;
-	}
-
-	$profile = prepareJSON($prefix, $profile_raw, $required_data, $__PROFILE_DEFAULT);
-
-	return $profile;
 }
 
 ?>

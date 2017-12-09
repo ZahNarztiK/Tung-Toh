@@ -7,9 +7,6 @@ if(!isset($_SESSION)){
 	session_start();
 }
 
-require_once("../../inc/db_connect.php");
-require_once("../../inc/init_response_func.php");
-require_once("../../inc/basic_func.php");
 require_once("../../inc/profile_func.php");
 
 require_once("../../inc/member_subfunc/register.php");

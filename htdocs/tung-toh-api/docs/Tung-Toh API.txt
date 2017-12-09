@@ -1,6 +1,6 @@
 Default Response JSON
 {
-	"message_code" : "--",
+	"message_code" : "---",
 	"message_numeric_code" : "-1",
 	"message_description" : "",
 	"data" : {}
@@ -144,24 +144,6 @@ Response
 
 ----------
 
-event.php?method=edittable [POST]
-"data" : {
-*	"event_id" (int)
-*	"table_id" (int)
-*	"code" (string: unique)
-	"x" (int: default = 0)
-	"y" (int: default = 0)
-	"rotation" (int: angle in 360 degree, default = 0)
-	"table_type_id" (int: default = 0)
-}
-
-Response
-"data" : {
-	"table_id" (int)
-}
-
-----------
-
 event.php?method=get [GET]
 *	"event_id" / "place_id" (int)
 
@@ -200,7 +182,7 @@ event.php?method=getall [GET]
 	place : {
 		[Place Data]
 		map : {
-			[Map & Table Booking List Data] ([Map & Table List Data]+[Table Booking List Data])
+			[Map & Event Table List Data] ([Map & Table List Data]+[Event Table List Data])
 		}
 	}
 }
@@ -212,40 +194,13 @@ event.php?method=getall [GET]
 
 ----------
 
-event.php?method=gettable [GET]
-*	"table_id" / "map_id" (int)
-
-[Table Booking Data] Response (table_id)
-data : {
-	current_booking_id (int)
-	event_id (int)
-	[Table Data]
-	booking_id (int)
-	active (int) [-1: Table removed, 0: Table present but not available, 1: Table avilable, 2: Table booked]
-}
-
-[Table Booking List Data] Response (map_id)
-data : {
-	quantity (int)
-	table_list: {
-		{
-			[Table Booking Data]
-		}
-		{
-			[Table Booking Data]
-		}
-	}
-}
-
-----------
-
 event.php?method=remove [GET]
 *  "event_id" / "place_id" (int)
 
 Response (event_id)
 "data" : {
 	"event_id" (int)
-	"table_booking_deleted" : {
+	"event_table_deleted" : {
 		"event_id" (int)
 		"quantity" (int)
 	}
@@ -254,12 +209,105 @@ Response (event_id)
 Response (place_id)
 "data" : {
 	"place_id" (int)
-	"table_booking_deleted" : {
+	"event_table_deleted" : {
 		"place_id" (int)
 		"quantity" (int)
 	}
 }
 
+----------
+
+event.php?method=addtable [POST]
+"data" : {
+*	"event__id" (int)
+*	"table_id" (int)
+}
+
+Response
+"data" : {
+	[Event Table Data]
+}
+
+----------
+
+event.php?method=edittable [POST]
+"data" : {
+*	"event_table_id" (int)
+	"x" (int: default = 0)
+	"y" (int: default = 0)
+	"rotation" (int: angle in 360 degree, default = 0)
+	"table_type_id" (int: default = 0)
+}
+
+Response
+"data" : {
+	"event_table_id" (int)
+}
+
+----------
+
+event.php?method=gettable [GET]
+*	"event_table_id" (int)
+
+[Event Table Data] Response
+data : {
+	event_table_id (int)
+	event_id (int)
+	[Table Data]
+	booking_id (int)
+	active (int) [-1: Table hidden, 0: Table present but not available, 1: Table avilable, 2: Table booked]
+}
+
+
+event.php?method=gettable [GET]
+*	"event_id" (int)
+*	"map_id" (int)
+
+[Event Table List Data] Response
+data : {
+	quantity (int)
+	event_table_list: {
+		{
+			[Event Table Data]
+		}
+		{
+			[Event Table Data]
+		}
+	}
+}
+
+----------
+
+event.php?method=removetable [GET]
+*	"event_table_id" (int)
+
+Response
+"data" : {
+	"event_table_id" (int)
+}
+
+
+event.php?method=removetable [GET]
+*	"event_id" (int)
+	"map_id" (int)
+
+Response
+"data" : {
+	"event_id" (int)
+	"quantity" (int)
+}
+
+----------
+
+event.php?method=hidetable [GET] (set active to -1: Table hidden)
+event.php?method=showtable [GET] (set active to 0: Table present but not available)
+event.php?method=closetable [GET] (set active to 1: Table avilable)
+*	"event_table_id" (int)
+
+Response
+"data" : {
+	"event_table_id" (int)
+}
 
 ----------
 
@@ -274,7 +322,7 @@ place.php?method=add [POST]
 
 Response
 "data" : {
-	"place_id" (int)
+	[Place Data]
 }
 
 ----------
@@ -356,7 +404,7 @@ map.php?method=add [POST]
 
 Response
 "data" : {
-	"map_id" (int)
+	[Map Data]
 }
 
 ----------
@@ -467,7 +515,7 @@ table.php?method=add [POST]
 
 Response
 "data" : {
-	"table_id" (int)
+	[Table Data]
 }
 
 ----------

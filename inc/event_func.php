@@ -4,8 +4,6 @@ if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
 
-require_once("../../inc/db_connect.php");
-require_once("../../inc/init_response_func.php");
 require_once("../../inc/basic_func.php");
 require_once("../../inc/place_func.php");
 require_once("../../inc/map_func.php");
@@ -17,17 +15,30 @@ $__EVENT_DEFAULT = [
 	"info" => "",
 	"image" => ""
 ];
+$__EVENT_DATA_REQUIRED = [
+	"addEvent" => [
+		"str*" => [ "name" ],
+		"+int*" => [ "place_id", "date" ],
+		"str" => [ "info", "image" ]
+	],
+	"editEvent" => [
+		"+int*" => [ "event_id", "place_id", "date" ],
+		"str*" => [ "name" ],
+		"str" => [ "info", "image" ]
+	]
+];
 $__EVENT_INFO_QUERY = "event_id, name, place_id, date, info, image, active";
 
 
 
 function addEvent($event_raw){
+	global $__EVENT_DEFAULT, $__EVENT_DATA_REQUIRED;
 	$prefix = $GLOBALS['EVENT_PREFIX'];
 
 	try{
 		global $DB_PDO;
 
-		$event = prepareEventData($event_raw);
+		$event = prepareJSON($prefix, $event_raw, $__EVENT_DATA_REQUIRED['addEvent'], $__EVENT_DEFAULT);
 
 
 		$stmt = $DB_PDO->prepare("SELECT place_id FROM place WHERE place_id = :place_id LIMIT 1");
@@ -52,7 +63,7 @@ function addEvent($event_raw){
 			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], "Event add failed.");
 		}
 
-		setupTableToEvent($event_id, $event['place_id']);
+		setupEventTables($event_id, $event['place_id']);
 
 		
 		$rs = getEvent($event_id, true);
@@ -66,12 +77,13 @@ function addEvent($event_raw){
 }
 
 function editEvent($event_raw){
+	global $__EVENT_DEFAULT, $__EVENT_DATA_REQUIRED;
 	$prefix = $GLOBALS['EVENT_PREFIX'];
 
 	try{
 		global $DB_PDO;
 
-		$event = prepareEventData($event_raw, true);
+		$event = prepareJSON($prefix, $event_raw, $__EVENT_DATA_REQUIRED['editEvent'], $__EVENT_DEFAULT);
 
 
 		$stmt = $DB_PDO->prepare("SELECT event_id FROM event WHERE event_id = :event_id LIMIT 1");
@@ -185,7 +197,7 @@ function getEventList($place_id, $getAll = false){
 function removeEvent($event_id){
 	$prefix = $GLOBALS['EVENT_PREFIX'];
 
-	$table_booking_deleted = removeTableList("event_id", $event_id);
+	$table_booking_deleted = removeEventTableList($event_id);
 
 	try{
 		global $DB_PDO;
@@ -218,7 +230,7 @@ function removeEventList($place_id){
 		global $DB_PDO;
 
 		
-		$stmt = $DB_PDO->prepare("DELETE FROM current_booking WHERE place_id = :place_id");
+		$stmt = $DB_PDO->prepare("DELETE FROM event_table WHERE place_id = :place_id");
 		$stmt->bindParam(":place_id", $place_id, PDO::PARAM_INT);
 		$stmt->execute();
 		
@@ -243,24 +255,6 @@ function removeEventList($place_id){
 	catch(PDOException $e){
 		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
-}
-
-function prepareEventData($event_raw, $isEdit = false){
-	global $__EVENT_DEFAULT;
-	$prefix = $GLOBALS['EVENT_PREFIX'];
-
-	$required_data = [
-		"str*" => [ "name" ],
-		"+int*" => [ "place_id", "date" ],
-		"str" => [ "info", "image" ]
-	];
-	if($isEdit){
-		$required_data['+int*'] += [ "event_id" ];
-	}
-
-	$event = prepareJSON($prefix, $event_raw, $required_data, $__EVENT_DEFAULT);
-
-	return $event;
 }
 
 ?>

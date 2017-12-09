@@ -3,7 +3,7 @@
 session_start();
 
 $_IN_SITE = true;
-require_once("../../inc/access_func.php");
+require_once("../../inc/basic_func.php");
 require_once("../../inc/member_func.php");
 
 

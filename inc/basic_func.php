@@ -4,8 +4,9 @@ if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
 
-require_once("../../inc/init_response_func.php");
-
+require_once("../../inc/basic/init_response_func.php");
+require_once("../../inc/basic/db_connect.php");
+require_once("../../inc/basic/access_func.php");
 
 function isFloat($num){
 	return (is_numeric($num) && is_float($num + 0));

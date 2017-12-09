@@ -7,9 +7,6 @@ if(!isset($_SESSION)){
 	session_start();
 }
 
-require_once("../../inc/init_response_func.php");
-require_once("../../inc/basic_func.php");
-
 $GLOBALS['ACCESS_CONSTANT'] = [
 	"LOGGEDIN" => 0,
 	"VERIFIED" => 1,

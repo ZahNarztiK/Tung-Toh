@@ -4,8 +4,6 @@ if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
 
-require_once("../../inc/db_connect.php");
-require_once("../../inc/init_response_func.php");
 require_once("../../inc/basic_func.php");
 require_once("../../inc/map_func.php");
 require_once("../../inc/table_func.php");
@@ -18,17 +16,31 @@ $__PLACE_DEFAULT = [
 	"logo_image" => "",
 	"info" => ""
 ];
+$__PLACE_DATA_REQUIRED = [
+	"addPlace" => [
+		"str*" => [ "name" ],
+		"float*" => [ "latitude", "longitude" ],
+		"str" => [ "logo_image", "info" ]
+	],
+	"editPlace" => [
+		"+int*" => [ "place_id" ],
+		"str*" => [ "name" ],
+		"float*" => [ "latitude", "longitude" ],
+		"str" => [ "logo_image", "info" ]
+	]
+];
 $__PLACE_INFO_QUERY = "place_id, name, X(location) as latitude, Y(location) as longitude, logo_image, info";
 
 
 
 function addPlace($place_raw){
+	global $__PLACE_DEFAULT, $__PLACE_DATA_REQUIRED;
 	$prefix = $GLOBALS['PLACE_PREFIX'];
 
 	try{
 		global $DB_PDO;
 
-		$place = preparePlaceData($place_raw);
+		$place = prepareJSON($prefix, $place_raw, $__PLACE_DATA_REQUIRED['addPlace'], $__PLACE_DEFAULT);
 
 
 		$stmt = $DB_PDO->prepare("SELECT place_id FROM place WHERE name = :name LIMIT 1");
@@ -53,9 +65,7 @@ function addPlace($place_raw){
 			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], "Place add failed.");
 		}
 
-		$rs = [
-			"place_id" => $place_id
-		];
+		$rs = getPlace($place_id);
 
 		return $rs;
 	}
@@ -65,12 +75,13 @@ function addPlace($place_raw){
 }
 
 function editPlace($place_raw){
+	global $__PLACE_DEFAULT, $__PLACE_DATA_REQUIRED;
 	$prefix = $GLOBALS['PLACE_PREFIX'];
 
 	try{
 		global $DB_PDO;
 
-		$place = preparePlaceData($place_raw, true);
+		$place = prepareJSON($prefix, $place_raw, $__PLACE_DATA_REQUIRED['editPlace'], $__PLACE_DEFAULT);
 
 
 		$stmt = $DB_PDO->prepare("SELECT place_id FROM place WHERE place_id = :place_id LIMIT 1");
@@ -179,24 +190,6 @@ function removePlace($place_id){
 	catch(PDOException $e){
 		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
-}
-
-function preparePlaceData($place_raw, $isEdit = false){
-	global $__PLACE_DEFAULT;
-	$prefix = $GLOBALS['PLACE_PREFIX'];
-
-	$required_data = [
-		"str*" => [ "name" ],
-		"float*" => [ "latitude", "longitude" ],
-		"str" => [ "logo_image", "info" ]
-	];
-	if($isEdit){
-		$required_data = [ "+int*" => [ "place_id" ] ] + $required_data;
-	}
-
-	$place = prepareJSON($prefix, $place_raw, $required_data, $__PLACE_DEFAULT);
-
-	return $place;
 }
 
 ?>

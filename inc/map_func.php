@@ -4,8 +4,6 @@ if(!isset($_IN_SITE)){
 	die("Access denied ai sus!!!");
 }
 
-require_once("../../inc/db_connect.php");
-require_once("../../inc/init_response_func.php");
 require_once("../../inc/basic_func.php");
 require_once("../../inc/table_func.php");
 
@@ -15,17 +13,28 @@ $__MAP_DEFAULT = [
 	"info" => "",
 	"bg_image" => ""
 ];
+$__MAP_DATA_REQUIRED = [
+	"addMap" => [
+		"+int*" => [ "place_id", "width", "height" ],
+		"str" => [ "name", "info", "bg_image" ]
+	],
+	"editMap" => [
+		"+int*" => [ "map_id", "width", "height" ],
+		"str" => [ "name", "info", "bg_image" ]
+	]
+];
 $__MAP_INFO_QUERY = "map_id, place_id, width, height, name, info, bg_image";
 
 
 
 function addMap($map_raw){
+	global $__MAP_DEFAULT, $__MAP_DATA_REQUIRED;
 	$prefix = $GLOBALS['MAP_PREFIX'];
 
 	try{
 		global $DB_PDO;
 
-		$map = prepareMapData($map_raw);
+		$map = prepareJSON($prefix, $map_raw, $__MAP_DATA_REQUIRED['addMap'], $__MAP_DEFAULT);
 
 
 		$stmt = $DB_PDO->prepare("SELECT place_id FROM place WHERE place_id = :place_id LIMIT 1");
@@ -51,9 +60,7 @@ function addMap($map_raw){
 			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], "Map add failed.");
 		}
 
-		$rs = [
-			"map_id" => $map_id
-		];
+		$rs = getMap($map_id);
 
 		return $rs;
 	}
@@ -63,12 +70,13 @@ function addMap($map_raw){
 }
 
 function editMap($map_raw){
+	global $__MAP_DEFAULT, $__MAP_DATA_REQUIRED;
 	$prefix = $GLOBALS['MAP_PREFIX'];
 
 	try{
 		global $DB_PDO;
 
-		$map = prepareMapData($map_raw, true);
+		$map = prepareJSON($prefix, $map_raw, $__MAP_DATA_REQUIRED['editMap'], $__MAP_DEFAULT);
 
 
 		$stmt = $DB_PDO->prepare("SELECT map_id FROM map WHERE map_id = :map_id LIMIT 1");
@@ -124,7 +132,7 @@ function getMap($map_id, $getAll = false, $event_id = null){
 
 		if($getAll){
 			if($is_event_param){
-				$rs['table'] = getTableList($rs['map_id'], $event_id);
+				$rs['table'] = getEventTableList($event_id, $rs['map_id']);
 			}
 			else{
 				$rs['table'] = getTableList($rs['map_id']);
@@ -168,7 +176,7 @@ function getMapList($place_id, $getAll = false, $event_id = null){
 		if($getAll){
 			if($is_event_param){
 				foreach($map_list as &$map){
-					$map->table = getTableList($map->map_id, $event_id);
+					$map->table = getEventTableList($event_id, $map->map_id);
 				}
 			}
 			else{
@@ -242,20 +250,6 @@ function removeMapList($place_id){
 	catch(PDOException $e){
 		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
 	}
-}
-
-function prepareMapData($map_raw, $isEdit = false){
-	global $__MAP_DEFAULT;
-	$prefix = $GLOBALS['MAP_PREFIX'];
-
-	$required_data = [
-		"+int*" => [ ($isEdit ? "map_id" : "place_id"), "width", "height" ],
-		"str" => [ "name", "info", "bg_image" ]
-	];
-
-	$map = prepareJSON($prefix, $map_raw, $required_data, $__MAP_DEFAULT);
-
-	return $map;
 }
 
 ?>

@@ -3,7 +3,7 @@
 session_start();
 
 $_IN_SITE = true;
-require_once("../../inc/access_func.php");
+require_once("../../inc/basic_func.php");
 require_once("../../inc/map_func.php");
 
 if(!isset($_GET['method'])){
@@ -12,18 +12,16 @@ if(!isset($_GET['method'])){
 
 switch($_GET['method']){
 	case "add":
-		access_check($GLOBALS['MAP_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
+		$data = access_check($GLOBALS['MAP_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
-		$data = data_check($GLOBALS['MAP_PREFIX']);
 		$rs = addMap($data);
 
 		$success_msg = "Add hai la!";
 		break;
 
 	case "edit":
-		access_check($GLOBALS['MAP_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
+		$data = access_check($GLOBALS['MAP_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN'], true);
 
-		$data = data_check($GLOBALS['MAP_PREFIX']);
 		$rs = editMap($data);
 		
 		$success_msg = "Edit laew woi~";
