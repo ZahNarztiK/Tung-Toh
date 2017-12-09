@@ -158,6 +158,7 @@ function getEventTableList($event_id, $map_id){
 
 
 		$stmt = $DB_PDO->prepare("SELECT place_id FROM map WHERE map_id = :map_id AND place_id = (SELECT place_id FROM event WHERE event_id = :event_id LIMIT 1) LIMIT 1");
+		$stmt->bindParam(':map_id', $map_id, PDO::PARAM_INT);
 		$stmt->bindParam(':event_id', $event_id, PDO::PARAM_INT);
 		$stmt->execute();
 		
