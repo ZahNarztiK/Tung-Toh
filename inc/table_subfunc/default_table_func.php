@@ -186,7 +186,8 @@ function removeTable($table_id){
 		}
 		
 		$rs = [
-			"table_id" => $table_id
+			"table_id" => $table_id,
+			"event_table_deleted" => clearEventTableList("table_id", $table_id)
 		];
 
 		return $rs;
@@ -214,7 +215,8 @@ function removeTableList($identifier, $identifier_id){
 		
 		$rs = [
 			"$identifier" => $identifier_id,
-			"quantity" => $stmt->rowCount()
+			"quantity" => $stmt->rowCount(),
+			"event_table_deleted" => clearEventTableList($identifier, $identifier_id)
 		];
 
 		return $rs;

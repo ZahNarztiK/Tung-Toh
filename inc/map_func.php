@@ -156,6 +156,7 @@ function getMapList($place_id, $getAll = false, $event_id = null){
 	try{
 		global $DB_PDO;
 
+
 		$stmt = $DB_PDO->prepare("SELECT place_id FROM place WHERE place_id = :place_id LIMIT 1");
 		$stmt->bindParam(':place_id', $place_id, PDO::PARAM_INT);
 		$stmt->execute();
@@ -202,10 +203,9 @@ function getMapList($place_id, $getAll = false, $event_id = null){
 function removeMap($map_id){
 	$prefix = $GLOBALS['MAP_PREFIX'];
 
-	$table_deleted = removeTableList("map_id", $map_id);
-
 	try{
 		global $DB_PDO;
+
 
 		$stmt = $DB_PDO->prepare("DELETE FROM map WHERE map_id = :map_id");
 		$stmt->bindParam(':map_id', $map_id, PDO::PARAM_INT);
@@ -214,10 +214,11 @@ function removeMap($map_id){
 		if($stmt->rowCount() == 0){
 			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Map not found.");
 		}
-		
+
+
 		$rs = [
 			"map_id" => $map_id,
-			"table_deleted" => $table_deleted
+			"table_deleted" => removeTableList("map_id", $map_id)
 		];
 
 		return $rs;
@@ -230,19 +231,19 @@ function removeMap($map_id){
 function removeMapList($place_id){
 	$prefix = $GLOBALS['MAP_PREFIX'];
 
-	$table_deleted = removeTableList("place_id", $place_id);
-
 	try{
 		global $DB_PDO;
+
 
 		$stmt = $DB_PDO->prepare("DELETE FROM map WHERE place_id = :place_id");
 		$stmt->bindParam(":place_id", $place_id, PDO::PARAM_INT);
 		$stmt->execute();
 				
+		
 		$rs = [
 			"place_id" => $place_id,
 			"quantity" => $stmt->rowCount(),
-			"table_deleted" => $table_deleted
+			"table_deleted" => removeTableList("place_id", $place_id)
 		];
 
 		return $rs;

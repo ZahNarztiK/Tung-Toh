@@ -573,12 +573,20 @@ table.php?method=remove [GET]
 Response (table_id)
 "data" : {
 	"table_id" (int)
+	"event_table_deleted" : {
+		"table_id" (int)
+		"quantity" (int)
+	}
 }
 
 Response (map_id / place_id)
 "data" : {
 	"map_id" / "place_id" (int)
 	"quantity" (int)
+	"event_table_deleted" : {
+		"map_id" / "place_id" (int)
+		"quantity" (int)
+	}
 }
 
 ----------

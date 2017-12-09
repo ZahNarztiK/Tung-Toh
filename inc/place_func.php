@@ -165,11 +165,9 @@ function getPlace($place_id, $getAll = false, $event_id = null){
 function removePlace($place_id){
 	$prefix = $GLOBALS['PLACE_PREFIX'];
 
-	$map_deleted = removeMapList($place_id);
-	$event_deleted = removeEventList($place_id);
-
 	try{
 		global $DB_PDO;
+
 
 		$stmt = $DB_PDO->prepare("DELETE FROM place WHERE place_id = :place_id");
 		$stmt->bindParam(':place_id', $place_id, PDO::PARAM_INT);
@@ -179,10 +177,11 @@ function removePlace($place_id){
 			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Location not found.");
 		}
 		
+		
 		$rs = [
 			"place_id" => $place_id,
-			"map_deleted" => $map_deleted,
-			"event_deleted" => $event_deleted
+			"map_deleted" => removeMapList($place_id),
+			"event_deleted" => removeEventList($place_id)
 		];
 
 		return $rs;

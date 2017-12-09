@@ -60,6 +60,34 @@ function addEventTable($event_table_raw){
 	}
 }
 
+function clearEventTableList($identifier, $identifier_id){
+	$prefix = $GLOBALS['TABLE_PREFIX'];
+	$identifier_list = ["table_id", "map_id", "place_id"];
+
+	if(!in_array($identifier, $identifier_list) || notPositiveInt($identifier_id)){
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PHP'], "Identifier error.");
+	}
+
+	try{
+		global $DB_PDO;
+
+		
+		$stmt = $DB_PDO->prepare("DELETE FROM event_table WHERE $identifier = :$identifier");
+		$stmt->bindParam(":$identifier", $identifier_id, PDO::PARAM_INT);
+		$stmt->execute();
+		
+		$rs = [
+			"$identifier" => $identifier_id,
+			"quantity" => $stmt->rowCount()
+		];
+
+		return $rs;
+	}
+	catch(PDOException $e){
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
+	}
+}
+
 function editEventTable($event_table_raw){
 	global $__TABLE_DEFAULT, $__TABLE_DATA_REQUIRED;
 	$prefix = $GLOBALS['TABLE_PREFIX'];
