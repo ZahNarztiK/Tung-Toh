@@ -12,13 +12,13 @@ $GLOBALS['ACCESS_CONSTANT'] = [
 	"VERIFIED" => 1,
 	"OWNER" => 5,
 	"MOD" => 8,
-	"ADMIN" => 9,
+	"ADMIN" => 9
 ];
 $GLOBALS['ACCESS_CONSTANT']['ENUM'] = [
 	"Not Verified" => $GLOBALS['ACCESS_CONSTANT']['LOGGEDIN'],
 	"Verified" => $GLOBALS['ACCESS_CONSTANT']['VERIFIED'],
 	"Owner" => $GLOBALS['ACCESS_CONSTANT']['OWNER'],
-	"Moderator" = > $GLOBALS['ACCESS_CONSTANT']['MOD'],
+	"Moderator" => $GLOBALS['ACCESS_CONSTANT']['MOD'],
 	"Administrator" => $GLOBALS['ACCESS_CONSTANT']['ADMIN']
 ];
 
@@ -79,7 +79,7 @@ function getAccess($member_id){
 			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "User not found.");
 		}
 
-		return $stmt->fetchColumn();
+		return $GLOBALS['ACCESS_CONSTANT']['ENUM'][$stmt->fetchColumn()];
 	}
 	catch(PDOException $e){
 		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());

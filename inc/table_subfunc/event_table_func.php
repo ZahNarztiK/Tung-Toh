@@ -303,8 +303,8 @@ function setEventTableStatus($event_table_id, $status = "Open", $forceset = fals
 					reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], "Mai hai jong.");
 				}
 				elseif($__TABLE_EVENT_CONSTANT[$status] == $__TABLE_EVENT_CONSTANT[$current_status]){
-
-				}reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_DUPLICATED'], "Same status.");
+					reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_DUPLICATED'], "Same status.");
+				}
 			}
 		}
 
