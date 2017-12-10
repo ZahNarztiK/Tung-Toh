@@ -13,9 +13,8 @@ if(!isset($_GET['method'])){
 
 switch($_GET['method']){
 	case "edit":
-		access_check($GLOBALS['PROFILE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['LOGGEDIN'], true);
+		$data = access_check($GLOBALS['PROFILE_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['LOGGEDIN'], true);
 
-		$data = data_check($GLOBALS['PROFILE_PREFIX']);
 		$rs = editProfile($data);
 		
 		$success_msg = "Edit laew woi~";

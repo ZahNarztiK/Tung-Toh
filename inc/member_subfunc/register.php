@@ -47,7 +47,7 @@ function add_member($member_raw){
 					"member_id" => $member_id,
 					"email" => $email,
 					"session_id" => $session_id,
-					"verified" => 0
+					"status" => 0
 				];
 
 		

@@ -54,6 +54,6 @@ $__TABLE_QUERY = [
 	"defaultTable_db" => "table_id, map_id, place_id, code, location, rotation, table_type_id"
 ];
 $__TABLE_QUERY['eventTable'] = 
-	"event_table_ID, event_id, ".$__TABLE_QUERY["defaultTable"].", booking_id, active";
+	"event_table_ID, event_id, ".$__TABLE_QUERY["defaultTable"].", booking_id, status";
 
 ?>

@@ -16,11 +16,10 @@ $__PROFILE_DEFAULT = [
 $__PROFILE_DATA_REQUIRED = [
 	"editProfile" => [
 		"+int*" => [ "member_id" ],
-		"str*" => [ "name" ],
 		"str" => [ "firstname", "lastname", "tel", "profile_image" ]
 	]
 ];
-$__PROFILE_INFO_QUERY = "email, verified, firstname, lastname, tel, level, points, profile_image";
+$__PROFILE_INFO_QUERY = "email, status, firstname, lastname, tel, level, points, profile_image";
 
 
 
@@ -91,12 +90,6 @@ function getProfile($member_id){
 	}
 	catch(PDOException $e){
 		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PDO'], $e->getMessage());
-	}
-}
-
-function checkProfileAccess($member_id){
-	if($_SESSION['verified'] < $GLOBALS['ACCESS_CONSTANT']['ADMIN']  && $_SESSION['member_id'] != $member_id){
-		reject($GLOBALS['PROFILE_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['AC_LOW'], "Not yours. olo");
 	}
 }
 

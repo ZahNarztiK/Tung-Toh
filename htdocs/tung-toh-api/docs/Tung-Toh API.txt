@@ -99,7 +99,7 @@ profile.php?method=get [GET]
 [Profile Data] Response
 "data" : {
 	"email" (string)
-	"verified" (int) [0: Not verified, 1: Verified member, 9: Admin]
+	"status" (string) [ "Not Verified", "Verified", "Owner", "Moderator", "Administrator" ]
 	"firstname" (string)
 	"lastname" (string)
 	"tel" (string: tel number; 9-10 int)
@@ -255,7 +255,7 @@ data : {
 	event_id (int)
 	[Table Data]
 	booking_id (int)
-	active (int) [-1: Table hidden, 0: Table present but not available, 1: Table avilable, 2: Table booked]
+	status (string) [ "Hidden", "Closed", "Open", "Booked" ]
 }
 
 
@@ -299,9 +299,9 @@ Response
 
 ----------
 
-event.php?method=hidetable [GET] (set active to -1: Table hidden)
-event.php?method=showtable [GET] (set active to 0: Table present but not available)
-event.php?method=closetable [GET] (set active to 1: Table avilable)
+event.php?method=hidetable [GET] (set status to "Hidden")
+event.php?method=opentable [GET] (set status to "Open")
+event.php?method=closetable [GET] (set status to "Closed")
 *	"event_table_id" (int)
 
 Response

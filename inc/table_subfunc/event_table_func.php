@@ -5,10 +5,10 @@ if(!isset($_IN_SITE)){
 }
 
 $__TABLE_EVENT_CONSTANT = [
-	"hidden" => -1,
-	"closed" => 0,
-	"open" => 1,
-	"booked" => 2
+	"Hidden" => -1,
+	"Closed" => 0,
+	"Open" => 1,
+	"Booked" => 2
 ];
 
 function addEventTable($event_table_raw){
@@ -272,35 +272,50 @@ function removeEventTableList($event_id, $map_id = null){
 	}
 }
 
-function setEventTableActive($event_table_id, $status = "open"){
+function setEventTableStatus($event_table_id, $status = "Open", $forceset = false){
 	global $__TABLE_EVENT_CONSTANT;
 	$prefix = $GLOBALS['TABLE_PREFIX'];
+
+	if(!array_key_exists($status, $__TABLE_EVENT_CONSTANT)){
+		reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['PHP'], "Status error.");
+	}
 
 	try{
 		global $DB_PDO;
 
 		
-		$stmt = $DB_PDO->prepare("SELECT active FROM event_table WHERE event_table_id = :event_table_id LIMIT 1");
+		$stmt = $DB_PDO->prepare("SELECT status FROM event_table WHERE event_table_id = :event_table_id LIMIT 1");
 		$stmt->bindParam(':event_table_id', $event_table_id, PDO::PARAM_INT);
 		$stmt->execute();
 
 		if($stmt->rowCount() == 0){
 			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_NODATA'], "Event Table not found.");
 		}
-		$active = $stmt->fetchColumn();
 
-		if($active == $__TABLE_EVENT_CONSTANT[$status]){
-			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], "Same status.");
+		if(!$forceset){
+			$current_status = $stmt->fetchColumn();
+
+			if($__TABLE_EVENT_CONSTANT[$current_status] == $__TABLE_EVENT_CONSTANT['Booked']){
+				reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_DUPLICATED'], "Mee kon jong pai laew.");
+			}
+			else{
+				if($__TABLE_EVENT_CONSTANT[$status] == $__TABLE_EVENT_CONSTANT['Booked'] && $__TABLE_EVENT_CONSTANT[$current_status] < $__TABLE_EVENT_CONSTANT['Open']){
+					reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], "Mai hai jong.");
+				}
+				elseif($__TABLE_EVENT_CONSTANT[$status] == $__TABLE_EVENT_CONSTANT[$current_status]){
+
+				}reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_DUPLICATED'], "Same status.");
+			}
 		}
 
-		
-		$stmt = $DB_PDO->prepare("UPDATE event_table SET active = :active WHERE event_table_id = :event_table_id");
-		$stmt->bindParam(':active', $__TABLE_EVENT_CONSTANT[$status], PDO::PARAM_INT);
+				
+		$stmt = $DB_PDO->prepare("UPDATE event_table SET status = :status WHERE event_table_id = :event_table_id");
+		$stmt->bindParam(':status', $status);
 		$stmt->bindParam(':event_table_id', $event_table_id, PDO::PARAM_INT);
 		$stmt->execute();
 
 		if($stmt->rowCount() == 0){
-			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], "Event Table active status change failed.");
+			reject($prefix, $GLOBALS['RESPONSE_ERROR_CODE']['DB_FAILED'], "Event Table status change failed.");
 		}
 		
 

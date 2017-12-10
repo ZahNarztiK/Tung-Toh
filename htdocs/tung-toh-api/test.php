@@ -5,16 +5,20 @@ echo "---===[ Test ]===---<br><br>";
 //ini_set('display_errors', 'On');
 //set_error_handler("var_dump");
 
-$kuy = ["asd","asdfsdaf","411471"];//["ok"=>9,"aaa"=>1,"asdf"=>999];
+$kuy = ["a"=>"asd","b"=>"asdfsdaf","c"=>"411471"];//["ok"=>9,"aaa"=>1,"asdf"=>999];
 //var_dump($kuy);
 //lol($kuy);
 //echo preg_match("/^.*(\*)$/", "+int", $rs);
-preg_match("/^(.*[^\*])\*?$/", "+int*", $rs);
-var_dump($rs);
+//preg_match("/^(.*[^\*])\*?$/", "+int*", $rs);
+//var_dump($rs);
 echo "<br><br><br>";
-echo $rs[1];
+//echo $rs[1];
 
 lol($kuy, 123);
+
+//$GLOBALS['ok'] = "555+";
+session_start();
+echo (in_array("asdfkkkkk", $kuy) ==0?"T":"F");
 
 
 function lol(&$eiei){

@@ -20,7 +20,7 @@ function verifySession($session_raw){
 		$session_id = $session['session_id'];
 		
 
-		$stmt = $DB_PDO->prepare("SELECT member_id, email, verified FROM member WHERE (session_id = :session_id) LIMIT 1");
+		$stmt = $DB_PDO->prepare("SELECT member_id, email, status FROM member WHERE (session_id = :session_id) LIMIT 1");
 		$stmt->bindParam(':session_id', $session_id);
 		$stmt->execute();
 		

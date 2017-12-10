@@ -29,10 +29,10 @@ switch($_GET['method']){
 		break;
 
 	case "closetable":
-		access_check($GLOBALS['EVENT_PREFIX']);
+		access_check($GLOBALS['EVENT_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN']);
 
 		if(screenData($_GET, [ "+int*" => "event_table_id" ])){
-			$rs = setEventTableActive($_GET['event_table_id'], "closed");
+			$rs = setEventTableStatus($_GET['event_table_id'], "Closed");
 		}
 		else{
 			reject($GLOBALS['EVENT_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Event Table ID, KAK");
@@ -96,10 +96,10 @@ switch($_GET['method']){
 		break;
 
 	case "hidetable":
-		access_check($GLOBALS['EVENT_PREFIX']);
+		access_check($GLOBALS['EVENT_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN']);
 
 		if(screenData($_GET, [ "+int*" => "event_table_id" ])){
-			$rs = setEventTableActive($_GET['event_table_id'], "hidden");
+			$rs = setEventTableStatus($_GET['event_table_id'], "Hidden");
 		}
 		else{
 			reject($GLOBALS['EVENT_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Event Table ID, KAK");
@@ -145,11 +145,11 @@ switch($_GET['method']){
 		$success_msg = "Lob la na jaa!";
 		break;
 
-	case "showtable":
-		access_check($GLOBALS['EVENT_PREFIX']);
+	case "opentable":
+		access_check($GLOBALS['EVENT_PREFIX'], $GLOBALS['ACCESS_CONSTANT']['ADMIN']);
 
 		if(screenData($_GET, [ "+int*" => "event_table_id" ])){
-			$rs = setEventTableActive($_GET['event_table_id']);
+			$rs = setEventTableStatus($_GET['event_table_id'], "Open");
 		}
 		else{
 			reject($GLOBALS['EVENT_PREFIX'], $GLOBALS['RESPONSE_ERROR_CODE']['INFO'], "Event Table ID, KAK");
